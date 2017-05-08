@@ -26,11 +26,10 @@ File myFile;
 void setup() {
 
   // Open serial communications and wait for port to open:
-  Serial.begin(9600);
+  Serial.begin(57600);
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
   }
-  SD.remove("text.txt");Serial.println("KILL");
 
   Serial.print("Initializing SD card...");
 
@@ -42,7 +41,9 @@ void setup() {
 
   // open the file. note that only one file can be open at a time,
   // so you have to close this one before opening another.
+  SD.remove("test.txt");
   myFile = SD.open("test.txt", FILE_WRITE);
+  
 
   // if the file opened okay, write to it:
   if (myFile) {
@@ -82,7 +83,7 @@ void loop() {
     Serial.print("Writing to test.txt...");
     Serial.print(i);
     myFile.print("Tension de la batterie : ");
-    myFile.println(digitalRead(0));
+    myFile.println((analogRead(0)*6.2)/1023.f);
     // close the file:
     myFile.close();
     Serial.println("done.");
