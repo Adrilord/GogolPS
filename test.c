@@ -7,6 +7,10 @@
 typedef enum MENU_TYPE MENU_TYPE;
 enum MENU_TYPE {ACCUEIL, DATE, PARCOURS ,INTERVAL, COORDS1, COORDS2, 
 	COORDS3, COORDS4, COORDS5, ENR1, ENR2};
+#define TRUE 0
+#define FALSE 1
+#define NORMAL 0
+#define CONFIG 1
 
 typedef struct Datetime {
 	int year;
@@ -112,7 +116,7 @@ typedef struct Menu{
 	int selectedIDGroup;
 	int maxSelectionGroupId;
 	int isConfigurable; //0 (TRUE)
-	int configureMode; // avec BPEN+BP1+BP0 (sw4)
+	int configureMode; // avec BPEN+BP1+BP0 (sw4), 0->normal, 1->config
 	struct Menu* sw1Connection; //BPEN
 	struct Menu* sw2Connection; //BPEN+BP0
 	struct Menu* sw3Connection; //BPEN+BP1
@@ -132,43 +136,78 @@ void showMenu(Menu menu)
 
 void generateMenu(Menu* menu, ShowModel* showModel, MENU_TYPE menu_type)
 {
-	char result[17]="";
+	char cases[17]="";
+	menu->selectionIDGroupCases[0]=-1;
+	menu->selectionIDGroupCases[1]=-1;
+	menu->selectionIDGroupCases[2]=-1;
+	menu->selectionIDGroupCases[3]=-1;
+	menu->selectionIDGroupCases[4]=-1;
+	menu->selectionIDGroupCases[5]=-1;
+	menu->selectionIDGroupCases[6]=-1;
+	menu->selectionIDGroupCases[7]=-1;
+	menu->selectionIDGroupCases[8]=-1;
+	menu->selectionIDGroupCases[9]=-1;
+	menu->selectionIDGroupCases[10]=-1;
+	menu->selectionIDGroupCases[11]=-1;
+	menu->selectionIDGroupCases[12]=-1;
+	menu->selectionIDGroupCases[13]=-1;
+	menu->selectionIDGroupCases[14]=-1;
+	menu->selectionIDGroupCases[15]=-1;
+	menu->configureMode=NORMAL;
 	switch(menu_type) {
 		case ACCUEIL :
-			strcat(result,showModel->localShowDateTime.hour);
-			strcat(result,":");
-			strcat(result,showModel->localShowDateTime.minute);
-			strcat(result,":");
-			strcat(result,showModel->localShowDateTime.second);
-			strcat(result,"BAT");
-			strcat(result,":");
-			strcat(result,showModel->autonomy);
-			strcat(result,"%");
-			strcpy(menu->cases,result);
+			strcat(cases,showModel->localShowDateTime.hour);
+			strcat(cases,":");
+			strcat(cases,showModel->localShowDateTime.minute);
+			strcat(cases,":");
+			strcat(cases,showModel->localShowDateTime.second);
+			strcat(cases,"BAT");
+			strcat(cases,":");
+			strcat(cases,showModel->autonomy);
+			strcat(cases,"%");
+			menu->isConfigurable=TRUE;
 		break;
-		//~ case DATE :
-		//~ break;
-		//~ PARCOURS :
-		//~ break; 
-		//~ INTERVAL :
-		//~ break;
-		//~ COORDS1 :
-		//~ break; 
-		//~ COORDS2 :
-		//~ break;
-		//~ COORDS3 :
-		//~ break;
-		//~ COORDS4 :
-		//~ break;
-		//~ COORDS5 :
-		//~ break;
-		//~ ENR1: 
-		//~ break;
-		//~ ENR2:
-		//~ break;
+		case DATE :
+			strcat(cases,"   ");
+			strcat(cases,showModel->localShowDateTime.day);
+			strcat(cases," ");
+			strcat(cases,showModel->localShowDateTime.month);
+			strcat(cases,"    ");
+			strcat(cases,showModel->localShowDateTime.year);
+		break;
+		PARCOURS :
+			strcat(cases,"PARCOURS");
+			//~ strcat(cases,showModel->localShowDateTime.hour);
+			//~ strcat(cases,":");
+			//~ strcat(cases,showModel->localShowDateTime.minute);
+			//~ strcat(cases,":");
+			//~ strcat(cases,showModel->localShowDateTime.second);
+		break; 
+		INTERVAL :
+		break;
+		COORDS1 :
+		break; 
+		COORDS2 :
+		break;
+		COORDS3 :
+		break;
+		COORDS4 :
+		break;
+		COORDS5 :
+		break;
+		ENR1: 
+		break;
+		ENR2:
+		break;
 		default :
 		break;
 	}
+	strcpy(menu->cases,cases);
+}
+
+void connectMenus()
+{
+	
 }
 
 void initModel(Model* model)

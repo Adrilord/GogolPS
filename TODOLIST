@@ -1,5 +1,8 @@
 Tests librairies GPS Arduino -> Thibault done
 Finir implémentation initiale en C (quit le Cpp, il faut utiliser des structs) -> Adrien
 	Affichage de tous les menus en console -->
+		gestion des cases[16] -->
+		guid -->
+		interconnections
 	Mise à jour automatique de toutes les valeurs du mode à partir du module GPS -->
 	Menus de configuration -->
