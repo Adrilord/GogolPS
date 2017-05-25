@@ -6,7 +6,7 @@
 #define NUMBER_OF_CASES 17 //16
 typedef enum MENU_TYPE MENU_TYPE;
 enum MENU_TYPE {ACCUEIL, DATE, PARCOURS ,INTERVAL, COORDS1, COORDS2, 
-	COORDS3, COORDS4, COORDS5, ENR1, ENR2};
+	COORDS3, COORDS4, ENR1, ENR2};
 #define TRUE 0
 #define FALSE 1
 #define NORMAL 0
@@ -35,13 +35,14 @@ typedef struct Showdatetime {
 Showdatetime datetime2Showdatetime(Datetime* datetime)
 {
 	Showdatetime showdatetime;
-	snprintf(showdatetime.year, sizeof showdatetime.year, "%d", datetime->year);
-	snprintf(showdatetime.month, sizeof showdatetime.month, "%d", datetime->month);
-	snprintf(showdatetime.day, sizeof showdatetime.day, "%d", datetime->day);
-	snprintf(showdatetime.hour, sizeof showdatetime.hour, "%d", datetime->hour);
-	snprintf(showdatetime.minute, sizeof showdatetime.minute, "%d", datetime->minute);
-	snprintf(showdatetime.second, sizeof showdatetime.second, "%d", datetime->second);
-	snprintf(showdatetime.hundredths, sizeof showdatetime.hundredths, "%d", datetime->hundredths);
+	snprintf(showdatetime.year, sizeof showdatetime.year, "%04d", datetime->year);
+	snprintf(showdatetime.month, sizeof showdatetime.month, "%02d", datetime->month);
+	snprintf(showdatetime.day, sizeof showdatetime.day, "%02d", datetime->day);
+	snprintf(showdatetime.hour, sizeof showdatetime.hour, "%02d", datetime->hour);
+	snprintf(showdatetime.minute, sizeof showdatetime.minute, "%02d", datetime->minute);
+	snprintf(showdatetime.second, sizeof showdatetime.second, "%02d", datetime->second);
+	snprintf(showdatetime.hundredths, sizeof showdatetime.hundredths, "%02d", datetime->hundredths);
+
 	return showdatetime;
 }
 
@@ -63,10 +64,10 @@ typedef struct Model {
 
 typedef struct ShowModel {
 	//local prog data
-	char autonomy[3];
+	char autonomy[4];
 	Showdatetime localShowDateTime;
-	char durationParcours[7]; // HH:MM:SS
-	char durationInterval[7]; //MM:SS:hShS
+	char durationParcours[9]; // HH:MM:SS
+	char durationInterval[9]; //MM:SS:hShS
 	//GPS data
 	char latitude[7], longitude[7], altitude[7]; // xx.xxx
 	char course[7];
@@ -74,26 +75,31 @@ typedef struct ShowModel {
 	Showdatetime GPSShowDateTime;
 	char satellites[3];
 	char hdop[7];
+	//filename for recording
+	char recordFilename[17];
 }ShowModel;
 
 ShowModel modelToShowModel(Model* model)
 {
 	ShowModel showModel;
-	snprintf(showModel.autonomy, sizeof showModel.autonomy, "%d", model->autonomy);
+	snprintf(showModel.autonomy, sizeof showModel.autonomy, "%03d", model->autonomy);
 	showModel.localShowDateTime = datetime2Showdatetime(&model->localDateTime);
-	snprintf(showModel.durationParcours, sizeof showModel.durationParcours, "%d:%d:%d", (model->durationParcours/3600),
+	snprintf(showModel.durationParcours, sizeof showModel.durationParcours, "%02d:%02d:%02d", (model->durationParcours/3600),
 		(model->durationParcours%3600)/60,(model->durationParcours%3600)%60);
-	snprintf(showModel.durationInterval, sizeof showModel.durationInterval,"%d:%d:%d", (model->durationParcours/6000),
+	snprintf(showModel.durationInterval, sizeof showModel.durationInterval,"%02d:%02d:%02d", (model->durationParcours/6000),
 		(model->durationParcours%6000)/100,(model->durationParcours%6000)%100);
-	snprintf(showModel.latitude, sizeof showModel.latitude, "%f", model->latitude);
-    snprintf(showModel.longitude, sizeof showModel.longitude, "%f", model->longitude);
-    snprintf(showModel.altitude, sizeof showModel.altitude, "%f", model->altitude);
-    snprintf(showModel.course, sizeof showModel.course, "%f", model->course);
-    snprintf(showModel.speed, sizeof showModel.speed, "%f", model->speed);
+	snprintf(showModel.latitude, sizeof showModel.latitude, "%02.3f", model->latitude);
+    snprintf(showModel.longitude, sizeof showModel.longitude, "%02.3f", model->longitude);
+    snprintf(showModel.altitude, sizeof showModel.altitude, "%02.3f", model->altitude);
+    snprintf(showModel.course, sizeof showModel.course, "%02.3f", model->course);
+    snprintf(showModel.speed, sizeof showModel.speed, "%02.3f", model->speed);
     showModel.GPSShowDateTime = datetime2Showdatetime(&model->GPSDateTime);
-    snprintf(showModel.longitude, sizeof showModel.longitude, "%f", model->longitude);
-    snprintf(showModel.satellites, sizeof showModel.satellites, "%d", model->satellites);
-    snprintf(showModel.hdop, sizeof showModel.hdop, "%ld", model->hdop);
+    snprintf(showModel.longitude, sizeof showModel.longitude, "%02.3f", model->longitude);
+    snprintf(showModel.satellites, sizeof showModel.satellites, "%02d", model->satellites);
+    snprintf(showModel.hdop, sizeof showModel.hdop, "%06ld", model->hdop);
+    snprintf(showModel.recordFilename,sizeof showModel.recordFilename,"EN%s%s%s%s%s%s",
+		showModel.localShowDateTime.year,showModel.localShowDateTime.month,showModel.localShowDateTime.day
+		,showModel.localShowDateTime.hour,showModel.localShowDateTime.minute,showModel.localShowDateTime.second);
     
     return showModel;
 }
@@ -119,7 +125,6 @@ typedef struct Menu{
 	int configureMode; // avec BPEN+BP1+BP0 (sw4), 0->normal, 1->config
 	struct Menu* sw1Connection; //BPEN
 	struct Menu* sw2Connection; //BPEN+BP0
-	struct Menu* sw3Connection; //BPEN+BP1
 }Menu;
 
 void showMenu(Menu menu)
@@ -136,7 +141,7 @@ void showMenu(Menu menu)
 
 void generateMenu(Menu* menu, ShowModel* showModel, MENU_TYPE menu_type)
 {
-	char cases[17]="";
+	char cases[17]="\0";
 	menu->selectionIDGroupCases[0]=-1;
 	menu->selectionIDGroupCases[1]=-1;
 	menu->selectionIDGroupCases[2]=-1;
@@ -154,6 +159,7 @@ void generateMenu(Menu* menu, ShowModel* showModel, MENU_TYPE menu_type)
 	menu->selectionIDGroupCases[14]=-1;
 	menu->selectionIDGroupCases[15]=-1;
 	menu->configureMode=NORMAL;
+	menu->maxSelectionGroupId=-1;
 	switch(menu_type) {
 		case ACCUEIL :
 			strcat(cases,showModel->localShowDateTime.hour);
@@ -164,8 +170,8 @@ void generateMenu(Menu* menu, ShowModel* showModel, MENU_TYPE menu_type)
 			strcat(cases,"BAT");
 			strcat(cases,":");
 			strcat(cases,showModel->autonomy);
-			strcat(cases,"%");
-			menu->isConfigurable=TRUE;
+			strcat(cases,"%%");
+			menu->isConfigurable=FALSE;
 		break;
 		case DATE :
 			strcat(cases,"   ");
@@ -174,35 +180,100 @@ void generateMenu(Menu* menu, ShowModel* showModel, MENU_TYPE menu_type)
 			strcat(cases,showModel->localShowDateTime.month);
 			strcat(cases,"    ");
 			strcat(cases,showModel->localShowDateTime.year);
+			menu->isConfigurable=TRUE;
+			menu->selectionIDGroupCases[3]=0;
+			menu->selectionIDGroupCases[4]=0;
+			menu->selectionIDGroupCases[6]=1;
+			menu->selectionIDGroupCases[7]=1;
+			menu->selectionIDGroupCases[12]=2;
+			menu->selectionIDGroupCases[13]=2;
+			menu->selectionIDGroupCases[14]=2;
+			menu->selectionIDGroupCases[15]=2;
+			menu->maxSelectionGroupId=2;
 		break;
-		PARCOURS :
+		case PARCOURS :
 			strcat(cases,"PARCOURS");
-			//~ strcat(cases,showModel->localShowDateTime.hour);
-			//~ strcat(cases,":");
-			//~ strcat(cases,showModel->localShowDateTime.minute);
-			//~ strcat(cases,":");
-			//~ strcat(cases,showModel->localShowDateTime.second);
+			strcat(cases,showModel->durationParcours);
+			menu->isConfigurable=TRUE;
+			menu->selectionIDGroupCases[8]=0;
+			menu->selectionIDGroupCases[9]=0;
+			menu->selectionIDGroupCases[11]=1;
+			menu->selectionIDGroupCases[12]=1;
+			menu->selectionIDGroupCases[14]=2;
+			menu->selectionIDGroupCases[15]=2;
+			menu->maxSelectionGroupId=2;
 		break; 
-		INTERVAL :
+		case INTERVAL :
+			strcat(cases,"INTERVms");
+			strcat(cases,showModel->durationInterval);
+			menu->isConfigurable=TRUE;
+			menu->selectionIDGroupCases[8]=0;
+			menu->selectionIDGroupCases[9]=0;
+			menu->selectionIDGroupCases[11]=1;
+			menu->selectionIDGroupCases[12]=1;
+			menu->selectionIDGroupCases[14]=2;
+			menu->selectionIDGroupCases[15]=2;
+			menu->maxSelectionGroupId=2;
 		break;
-		COORDS1 :
+		case COORDS1 :
+			strcat(cases,"LA");
+			strcat(cases,showModel->latitude);
+			strcat(cases,"LO");
+			strcat(cases,showModel->longitude);
+			menu->isConfigurable=FALSE;
 		break; 
-		COORDS2 :
+		case COORDS2 :
+			strcat(cases,"AL");
+			strcat(cases,showModel->altitude);
+			strcat(cases,"CO");
+			strcat(cases,showModel->course);
+			menu->isConfigurable=FALSE;
 		break;
-		COORDS3 :
+		case COORDS3 :
+			strcat(cases,"SP");
+			strcat(cases,showModel->speed);
+			strcat(cases,"SATT  ");
+			strcat(cases,showModel->satellites);
+			menu->isConfigurable=FALSE;
 		break;
-		COORDS4 :
+		case COORDS4 :
+			strcat(cases,"HD");
+			strcat(cases,showModel->hdop);
+			strcat(cases,"        ");
+			menu->isConfigurable=FALSE;
 		break;
-		COORDS5 :
+		case ENR1:
+			strcat(cases,"START   ");
+			strcat(cases,"STOP    ");
+			menu->isConfigurable=TRUE;
+			menu->selectionIDGroupCases[0]=0;
+			menu->selectionIDGroupCases[1]=0;
+			menu->selectionIDGroupCases[2]=0;
+			menu->selectionIDGroupCases[3]=0;
+			menu->selectionIDGroupCases[4]=0;
+			menu->selectionIDGroupCases[8]=1;
+			menu->selectionIDGroupCases[9]=1;
+			menu->selectionIDGroupCases[10]=1;
+			menu->selectionIDGroupCases[11]=1;
+			menu->maxSelectionGroupId=1;
 		break;
-		ENR1: 
-		break;
-		ENR2:
+		case ENR2:
+			strcat(cases,showModel->recordFilename);
+			menu->isConfigurable=FALSE;
 		break;
 		default :
+			strcat(cases,"SECRET  MENU");
+			menu->isConfigurable=FALSE;
 		break;
 	}
-	strcpy(menu->cases,cases);
+	//~ printf("TEST1 \n");
+	//~ printf(cases);
+	//~ printf("\n");
+	strcpy(menu->cases,"              ");
+	snprintf(menu->cases,17,cases);
+	//~ printf("TEST2 \n");
+	//~ printf(menu->cases);
+	//~ printf("\n");
 }
 
 void connectMenus()
@@ -212,13 +283,13 @@ void connectMenus()
 
 void initModel(Model* model)
 {
-	model->autonomy=100;
+	model->autonomy=10;
 	model->localDateTime.year=2017;
 	model->localDateTime.month=1;
 	model->localDateTime.day=1;
-	model->localDateTime.hour=10;
-	model->localDateTime.minute=10;
-	model->localDateTime.second=10;
+	model->localDateTime.hour=1;
+	model->localDateTime.minute=1;
+	model->localDateTime.second=1;
 	model->localDateTime.hundredths=0;
 	model->durationParcours=100; model->durationInterval=10;
 	model->latitude=50; model->longitude=40; model->altitude=30;
@@ -260,21 +331,68 @@ void initShowModel(ShowModel* showModel)
 	initShowDateTime(&showModel->GPSShowDateTime);
 	strcpy(showModel->satellites,"");
 	strcpy(showModel->hdop,"");
+	//record filename
+	strcpy(showModel->recordFilename,"");
+}
+
+void interconnexions(Menu menus[10])
+{
+	menus[ACCUEIL].sw1Connection = &menus[PARCOURS];
+	menus[ACCUEIL].sw2Connection = &menus[DATE];
+	menus[DATE].sw1Connection = &menus[PARCOURS];
+	menus[DATE].sw2Connection = &menus[ACCUEIL];
+	menus[PARCOURS].sw1Connection = &menus[COORDS1];
+	menus[PARCOURS].sw2Connection = &menus[INTERVAL];
+	menus[INTERVAL].sw1Connection = &menus[COORDS1];
+	menus[INTERVAL].sw2Connection = &menus[PARCOURS];
+	menus[COORDS1].sw1Connection = &menus[ENR1];
+	menus[COORDS1].sw2Connection = &menus[COORDS2];
+	menus[COORDS2].sw1Connection = &menus[ENR1];
+	menus[COORDS2].sw2Connection = &menus[COORDS3];
+	menus[COORDS3].sw1Connection = &menus[ENR1];
+	menus[COORDS3].sw2Connection = &menus[COORDS4];
+	menus[COORDS4].sw1Connection = &menus[ENR1];
+	menus[COORDS4].sw2Connection = &menus[COORDS1];
+	menus[ENR1].sw1Connection = &menus[ACCUEIL];
+	menus[ENR1].sw2Connection = &menus[ENR2];
+	menus[ENR2].sw1Connection = &menus[ACCUEIL];
+	menus[ENR2].sw2Connection = &menus[ENR1];
 }
 
 int main()
 {
 	Model momo;
 	ShowModel showMomo;
-	Menu accueil;
+	Menu menus[10];
 	initModel(&momo);
 	initShowModel(&showMomo);
 	showMomo = modelToShowModel(&momo);
-	generateMenu(&accueil, &showMomo, ACCUEIL);
-	showMenu(accueil);
-	
-	//~ char buffer[6];
-	//~ float myFloat=4.00179115;
-	//~ snprintf(buffer, sizeof buffer, "%f", myFloat);
-	//~ printf(buffer);
+	generateMenu(&menus[ACCUEIL], &showMomo, ACCUEIL);
+	generateMenu(&menus[DATE], &showMomo, DATE);
+	generateMenu(&menus[PARCOURS], &showMomo, PARCOURS);
+	generateMenu(&menus[INTERVAL], &showMomo, INTERVAL);
+	generateMenu(&menus[COORDS1], &showMomo, COORDS1);
+	generateMenu(&menus[COORDS2], &showMomo, COORDS2);
+	generateMenu(&menus[COORDS3], &showMomo, COORDS3);
+	generateMenu(&menus[COORDS4], &showMomo, COORDS4);
+	generateMenu(&menus[ENR1], &showMomo, ENR1);
+	generateMenu(&menus[ENR2], &showMomo, ENR2);
+	interconnexions(menus);
+	Menu* currentMenu = &menus[ACCUEIL];
+	showMenu(*currentMenu);
+	printf("\n\n\n\n\n\n");
+	while(1) {
+		char resp[4];
+		scanf("%s",resp);
+		//~ fgets(resp,4,stdin);
+		if(strcmp(resp,"sw1") == 0) {
+			currentMenu = currentMenu->sw1Connection;
+			showMenu(*currentMenu);
+			printf("\n\n\n\n\n\n");
+		} else if(strcmp(resp,"sw1") == 1) {
+			currentMenu = currentMenu->sw2Connection;
+			showMenu(*currentMenu);
+			printf("\n\n\n\n\n\n");
+		}
+	}
 }
