@@ -5,6 +5,8 @@ Finir implémentation initiale en C (quit le Cpp, il faut utiliser des structs) 
 		gestion des cases[16] --> DONE
 		guid --> done
 		interconnections --> done
-	Se séparer de l'utilisation de printf et les fonctions str (trop lourd) -->
+	Commencer l'implem arduino --> done
+	Se séparer de l'utilisation de printf et les fonctions str (trop lourd) --> done
+	Finir l'adaptation de menu.c/h et model.c/h pour Arduino --> en cours
 	Menus de configuration -->
 	Mise à jour automatique de toutes les valeurs du mode à partir du module GPS -->

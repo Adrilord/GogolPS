@@ -276,11 +276,6 @@ void generateMenu(Menu* menu, ShowModel* showModel, MENU_TYPE menu_type)
 	//~ printf("\n");
 }
 
-void connectMenus()
-{
-	
-}
-
 void initModel(Model* model)
 {
 	model->autonomy=10;
