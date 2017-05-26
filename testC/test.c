@@ -86,15 +86,14 @@ ShowModel modelToShowModel(Model* model)
 	showModel.localShowDateTime = datetime2Showdatetime(&model->localDateTime);
 	snprintf(showModel.durationParcours, sizeof showModel.durationParcours, "%02d:%02d:%02d", (model->durationParcours/3600),
 		(model->durationParcours%3600)/60,(model->durationParcours%3600)%60);
-	snprintf(showModel.durationInterval, sizeof showModel.durationInterval,"%02d:%02d:%02d", (model->durationParcours/6000),
-		(model->durationParcours%6000)/100,(model->durationParcours%6000)%100);
+	snprintf(showModel.durationInterval, sizeof showModel.durationInterval,"%02d:%02d:%02d", (model->durationInterval/6000),
+		(model->durationInterval%6000)/100,(model->durationInterval%6000)%100);
 	snprintf(showModel.latitude, sizeof showModel.latitude, "%02.3f", model->latitude);
     snprintf(showModel.longitude, sizeof showModel.longitude, "%02.3f", model->longitude);
     snprintf(showModel.altitude, sizeof showModel.altitude, "%02.3f", model->altitude);
     snprintf(showModel.course, sizeof showModel.course, "%02.3f", model->course);
     snprintf(showModel.speed, sizeof showModel.speed, "%02.3f", model->speed);
     showModel.GPSShowDateTime = datetime2Showdatetime(&model->GPSDateTime);
-    snprintf(showModel.longitude, sizeof showModel.longitude, "%02.3f", model->longitude);
     snprintf(showModel.satellites, sizeof showModel.satellites, "%02d", model->satellites);
     snprintf(showModel.hdop, sizeof showModel.hdop, "%06ld", model->hdop);
     snprintf(showModel.recordFilename,sizeof showModel.recordFilename,"EN%s%s%s%s%s%s",

@@ -1,6 +1,9 @@
 #ifndef MENU
 #define MENU
 
+#include "charmanagement.h"
+#include "model.h"
+
 #define NUMBER_OF_CASES 16
 enum MENU_TYPE {ACCUEIL, DATE, PARCOURS ,INTERVAL, COORDS1, COORDS2, 
 	COORDS3, COORDS4, ENR1, ENR2};
@@ -23,7 +26,7 @@ typedef struct Menu{
 
 void showMenu(Menu menu);
 
-//void generateMenu(Menu* menu, ShowModel* showModel, MENU_TYPE menu_type);
+void generateMenu(Menu* menu, ShowModel* showModel, MENU_TYPE menu_type);
 
 void interconnexions(Menu menus[10]);
 

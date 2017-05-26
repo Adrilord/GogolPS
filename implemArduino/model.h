@@ -2,13 +2,14 @@
 #define MODEL
 
 #include "datetime.h"
+#include "charmanagement.h"
 
 typedef struct Model {
 	//local prog data
 	int autonomy;
 	Datetime localDateTime;
-	int durationParcours; //in seconds
-	int durationInterval; //in milliseconds
+	long durationParcours; //in seconds
+	long durationInterval; //in milliseconds
 	//GPS data
 	float latitude, longitude; //in degrees
 	float altitude; //in meters
@@ -32,11 +33,12 @@ typedef struct ShowModel {
 	Showdatetime GPSShowDateTime;
 	char satellites[2];
 	char hdop[6];
-	//filename for recording
+	//recording
 	char recordFilename[16];
+  char isSDOK[2];
 }ShowModel;
 
-ShowModel modelToShowModel(Model* model);
+void modelToShowModel(Model* model, ShowModel* showModel);
 
 //updateModelGPSdata(Model model, TinyGPS gps);
 

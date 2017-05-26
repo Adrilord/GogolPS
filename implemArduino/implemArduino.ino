@@ -1,57 +1,12 @@
-//#include "model.h"
-//#include "datetime.h"
+#include <LiquidCrystal.h>
+#include "model.h"
+#include "datetime.h"
 #include "menu.h"
 #include "charmanagement.h"
 
-void toto()
+void testsCharMngmt ()
 {
-//    Model momo;
-//  ShowModel showMomo;
-//  Menu menus[10];
-//  initModel(&momo);
-//  initShowModel(&showMomo);
-//  showMomo = modelToShowModel(&momo);
-//  generateMenu(&menus[ACCUEIL], &showMomo, ACCUEIL);
-//  generateMenu(&menus[DATE], &showMomo, DATE);
-//  generateMenu(&menus[PARCOURS], &showMomo, PARCOURS);
-//  generateMenu(&menus[INTERVAL], &showMomo, INTERVAL);
-//  generateMenu(&menus[COORDS1], &showMomo, COORDS1);
-//  generateMenu(&menus[COORDS2], &showMomo, COORDS2);
-//  generateMenu(&menus[COORDS3], &showMomo, COORDS3);
-//  generateMenu(&menus[COORDS4], &showMomo, COORDS4);
-//  generateMenu(&menus[ENR1], &showMomo, ENR1);
-//  generateMenu(&menus[ENR2], &showMomo, ENR2);
-//  interconnexions(menus);
-//  Menu* currentMenu = &menus[ACCUEIL];
-//  showMenu(*currentMenu);
-//  printf("\n\n\n\n\n\n");
-//
-//    while(1) {
-//    char resp[4];
-//    scanf("%s",resp);
-//    //~ fgets(resp,4,stdin);
-//    if(strcmp(resp,"sw1") == 0) {
-//      currentMenu = currentMenu->sw1Connection;
-//      showMenu(*currentMenu);
-//      printf("\n\n\n\n\n\n");
-//    } else if(strcmp(resp,"sw1") == 1) {
-//      currentMenu = currentMenu->sw2Connection;
-//      showMenu(*currentMenu);
-//      printf("\n\n\n\n\n\n");
-//    }
-//  }
-//
-//
-//  
-}
-
-
-
-
-
-void setup()
-{
-  Serial.begin(9600);
+    Serial.begin(9600);
   char cases[16]="";
   strupdate(cases,0,"test",5);
   char intTest[5];
@@ -62,6 +17,42 @@ void setup()
 //  Serial.println(intTest);
   Serial.println(floatTest[5]);
   Serial.println(floatTest);
+}
+
+
+// initialize the library with the numbers of the interface pins
+LiquidCrystal lcd(4, 5, 6, 7, 8, 9);
+
+
+void setup()
+{
+  Serial.begin(9600);
+  
+  Model momo;
+  ShowModel showMomo;
+  Menu menus[10];
+  initModel(&momo);
+  //initShowModel(&showMomo);
+  modelToShowModel(&momo, &showMomo);
+  generateMenu(&menus[ACCUEIL], &showMomo, ACCUEIL);
+  generateMenu(&menus[DATE], &showMomo, DATE);
+  generateMenu(&menus[PARCOURS], &showMomo, PARCOURS);
+  generateMenu(&menus[INTERVAL], &showMomo, INTERVAL);
+  generateMenu(&menus[COORDS1], &showMomo, COORDS1);
+  generateMenu(&menus[COORDS2], &showMomo, COORDS2);
+  generateMenu(&menus[COORDS3], &showMomo, COORDS3);
+  generateMenu(&menus[COORDS4], &showMomo, COORDS4);
+  generateMenu(&menus[ENR1], &showMomo, ENR1);
+  generateMenu(&menus[ENR2], &showMomo, ENR2);
+  interconnexions(menus);
+
+  // set up the LCD's number of columns and rows:
+  lcd.begin(8, 2);
+  lcd.print(menus[PARCOURS].cases);
+  Serial.println("test");
+  Serial.println(showMomo.autonomy);
+  strupdate(menus[ACCUEIL].cases,0,"?",1);
+  Serial.println(menus[ACCUEIL].cases[0]);
 }
 
 void loop()

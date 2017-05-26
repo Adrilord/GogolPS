@@ -1,6 +1,8 @@
 #ifndef DATETIME
 #define DATETIME
 
+#include "charmanagement.h"
+
 typedef struct Datetime {
 	int year;
 	int month;
