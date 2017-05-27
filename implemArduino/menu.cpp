@@ -129,8 +129,11 @@
 			 menu->isConfigurable=FALSE;
 		 break;
 	 }
-   Serial.println("testmenu");
-   Serial.println(cases);
+   if(menu->isConfigurable == TRUE) {
+     menu->selectedIDGroup=0;
+   } else {
+     menu->selectedIDGroup=-1;
+   }
    strupdate(menu->cases,0,cases,16);
  }
 
@@ -157,3 +160,4 @@ void interconnexions(Menu menus[10])
 	menus[ENR2].sw1Connection = &menus[ACCUEIL];
 	menus[ENR2].sw2Connection = &menus[ENR1];
 }
+

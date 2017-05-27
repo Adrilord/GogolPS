@@ -7,6 +7,7 @@ Finir implémentation initiale en C (quit le Cpp, il faut utiliser des structs) 
 		interconnections --> done
 	Commencer l'implem arduino --> done
 	Se séparer de l'utilisation de printf et les fonctions str (trop lourd) --> done
-	Finir l'adaptation de menu.c/h et model.c/h pour Arduino --> en cours
-	Menus de configuration -->
+	Finir l'adaptation de menu.c/h et model.c/h pour Arduino --> done
+	Gestion subtile des boutons --> en cours
+	Menus de configuration --> en cours
 	Mise à jour automatique de toutes les valeurs du mode à partir du module GPS -->
