@@ -3,6 +3,7 @@
 
 #include "datetime.h"
 #include "charmanagement.h"
+#include <TinyGPS.h>
 
 typedef struct Model {
 	//local prog data
@@ -40,7 +41,7 @@ typedef struct ShowModel {
 
 void modelToShowModel(Model* model, ShowModel* showModel);
 
-//updateModelGPSdata(Model model, TinyGPS gps);
+void updateModelGPSdata(Model* model, TinyGPS* gps);
 
 void initModel(Model* model);
 

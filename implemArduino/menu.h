@@ -10,8 +10,6 @@ enum MENU_TYPE {ACCUEIL, DATE, PARCOURS ,INTERVAL, COORDS1, COORDS2,
 typedef enum MENU_TYPE MENU_TYPE;
 #define TRUE 0
 #define FALSE 1
-#define NORMAL 0
-#define CONFIG 1
 
 typedef struct Menu{
 	char cases[16];
@@ -22,12 +20,19 @@ typedef struct Menu{
 	int configureMode; // avec BPEN+BP1+BP0 (sw4), 0->normal, 1->config
 	struct Menu* sw1Connection; //BPEN
 	struct Menu* sw2Connection; //BPEN+BP0
+  MENU_TYPE menu_type;
 }Menu;
 
 void showMenu(Menu menu);
 
-void generateMenu(Menu* menu, ShowModel* showModel, MENU_TYPE menu_type);
+void generateMenu(Menu* menu, Model* model, MENU_TYPE menu_type);
 
 void interconnexions(Menu menus[10]);
+
+void increaseSelection(Menu* menu);
+
+void increaseSelectedConfigValue(Menu* menu, Model* model);
+
+void updateMenuCases(Menu* menu, Model* model);
 
 #endif

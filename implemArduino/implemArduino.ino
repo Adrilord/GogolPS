@@ -1,4 +1,6 @@
+#include <TinyGPS.h>
 #include <LiquidCrystal.h>
+#include <SoftwareSerial.h>
 #include <Bounce2.h>
 #include "model.h"
 #include "datetime.h"
@@ -22,6 +24,155 @@
 #define SW2 2
 #define SW3 3
 #define SW4 4
+#define GPSRX 2
+#define GPSTX 3
+
+void testsCharMngmt ();
+
+void showMenu(LiquidCrystal* lcd, Menu* menu, int configBlink);
+
+void testShowMenu(LiquidCrystal* lcd, Menu** menus);
+
+//3 states : 0 init, 1 engaged, 2 waiting to desengaged
+//2 values : HIGH or LOW
+void readBoutons(Bounce* debouncer , int* buttonStates, int* buttonValues);
+
+//return switchActivated
+int buttonStatesToSwitchActivated(int* buttonStates);
+
+void testButtons();
+
+//FOR THE GPS
+static void smartdelay(unsigned long ms);
+static void print_float(float val, float invalid, int len, int prec);
+static void print_int(unsigned long val, unsigned long invalid, int len);
+static void print_date(TinyGPS &gps);
+static void print_str(const char *str, int len);
+
+// initialize the library with the numbers of the interface pins
+LiquidCrystal lcd(4, 5, 6, 7, 8, 9);
+
+//GPS
+TinyGPS gps;
+SoftwareSerial ss(GPSRX, GPSTX);
+
+//button pins
+int buttonPins[NBBUTTONS]={PBP0,PBP1,PBPEN};
+
+// Instantiate a Bounce object
+Bounce debouncer[NBBUTTONS];
+int buttonValues[NBBUTTONS]={HIGH,HIGH,HIGH};
+int buttonStates[NBBUTTONS]={INIT,INIT,INIT};
+
+Model momo;
+Menu menus[10];
+Menu* currentMenu;
+
+int configBlinking=FALSE;
+
+void setup()
+{
+  Serial.begin(9600);
+
+  // init menus and model
+  initModel(&momo);
+  generateMenu(&menus[ACCUEIL], &momo, ACCUEIL);
+  generateMenu(&menus[DATE], &momo, DATE);
+  generateMenu(&menus[PARCOURS], &momo, PARCOURS);
+  generateMenu(&menus[INTERVAL], &momo, INTERVAL);
+  generateMenu(&menus[COORDS1], &momo, COORDS1);
+  generateMenu(&menus[COORDS2], &momo, COORDS2);
+  generateMenu(&menus[COORDS3], &momo, COORDS3);
+  generateMenu(&menus[COORDS4], &momo, COORDS4);
+  generateMenu(&menus[ENR1], &momo, ENR1);
+  generateMenu(&menus[ENR2], &momo, ENR2);
+  interconnexions(menus);
+
+  currentMenu = &menus[ACCUEIL];
+
+  // set up the LCD's number of columns and rows:
+  lcd.begin(8, 2);
+  showMenu(&lcd, currentMenu, false);
+  
+
+  // Setup for BUTTONS
+  for(int i=0; i<NBBUTTONS; i++) {
+    debouncer[i]=Bounce();
+    
+      // Setup the button with an internal pull-up :
+    pinMode(buttonPins[i],INPUT_PULLUP);
+  
+    // After setting up the button, setup the Bounce instance :
+    debouncer[i].attach(buttonPins[i]);
+    debouncer[i].interval(5); // interval in ms
+    debouncer[i].update();
+    buttonValues[i]=debouncer[i].read();
+  }
+
+  //SoftwareSerial setup for the gps
+   ss.begin(4800);
+}
+
+void loop()
+{
+  readBoutons(debouncer , buttonStates, buttonValues);
+  int switchActivated = buttonStatesToSwitchActivated(buttonStates);
+  switch(switchActivated) {
+    case SW1 :
+      Serial.println("SW1");
+      if(currentMenu->configureMode == FALSE) {
+        currentMenu = currentMenu -> sw1Connection;
+      }
+      break;
+    case SW2 :
+      Serial.println("SW2");
+      if(currentMenu->configureMode == FALSE) {
+        currentMenu = currentMenu -> sw2Connection;
+      } else {
+        increaseSelectedConfigValue(currentMenu,&momo);
+      }
+      break;
+    case SW3 :
+      Serial.println("SW3");
+      if(currentMenu->configureMode==TRUE) {
+        increaseSelection(currentMenu);
+      }
+      break;
+    case SW4 :
+      Serial.println("SW4");
+      if(currentMenu->isConfigurable == TRUE && currentMenu->configureMode==FALSE) {
+        currentMenu->configureMode=TRUE;
+      } else {
+        currentMenu->configureMode=FALSE;
+      }
+      break;
+    default :
+      break;
+  }
+  for(int i=0; i<NBBUTTONS; i++) {
+    Serial.print("Button ");
+    Serial.print(i);
+//    Serial.print("the value : ");Serial.println(buttonValues[i]);
+//    Serial.print("the state : ");Serial.println(buttonStates[i]);
+    Serial.print("  ");
+    Serial.print(buttonValues[i]);
+    Serial.print("  ");
+  }
+  Serial.print("\n");
+
+  //Model refreshing
+  updateModelGPSdata(&momo, &gps);
+  //Menu refreshing
+  showMenu(&lcd, currentMenu, configBlinking);
+  updateMenuCases(currentMenu, &momo);
+  //Config blinking
+  if(currentMenu->isConfigurable == TRUE && currentMenu->configureMode==TRUE) {
+      configBlinking=(configBlinking + 1) %2; 
+  } else {
+      configBlinking=FALSE;
+  }
+  delay(50);
+}
 
 void testsCharMngmt ()
 {
@@ -38,7 +189,7 @@ void testsCharMngmt ()
   Serial.println(floatTest);
 }
 
-void showMenu(LiquidCrystal* lcd, Menu* menu, bool configBlink)
+void showMenu(LiquidCrystal* lcd, Menu* menu, int configBlink)
 {
   for (int  thisRow = 0; thisRow < ROWS; thisRow++) {
       // loop over the rows:
@@ -49,7 +200,7 @@ void showMenu(LiquidCrystal* lcd, Menu* menu, bool configBlink)
         lcd->write(menu->cases[thisCol+8*thisRow]);
       }
     }
-  if(configBlink) {
+  if(configBlink==TRUE) {
     for(int i=0; i<16; i++) {
       if(menu->selectionIDGroupCases[i] == menu->selectedIDGroup) {
         int thisCol = i % 8;
@@ -122,24 +273,6 @@ int buttonStatesToSwitchActivated(int* buttonStates)
   }
 }
 
-
-
-// initialize the library with the numbers of the interface pins
-LiquidCrystal lcd(4, 5, 6, 7, 8, 9);
-
-//button pins
-int buttonPins[NBBUTTONS]={PBP0,PBP1,PBPEN};
-
-// Instantiate a Bounce object
-Bounce debouncer[NBBUTTONS];
-int buttonValues[NBBUTTONS]={HIGH,HIGH,HIGH};
-int buttonStates[NBBUTTONS]={INIT,INIT,INIT};
-
-Model momo;
-ShowModel showMomo;
-Menu menus[10];
-Menu* currentMenu;
-
 void testButtons()
 {
   readBoutons(debouncer , buttonStates, buttonValues);
@@ -172,83 +305,78 @@ void testButtons()
   Serial.print("\n");
 }
 
-void setup()
+
+static void smartdelay(unsigned long ms)
 {
-  Serial.begin(9600);
-
-  // init menus and model
-  initModel(&momo);
-  initShowModel(&showMomo);
-  modelToShowModel(&momo, &showMomo);
-  generateMenu(&menus[ACCUEIL], &showMomo, ACCUEIL);
-  generateMenu(&menus[DATE], &showMomo, DATE);
-  generateMenu(&menus[PARCOURS], &showMomo, PARCOURS);
-  generateMenu(&menus[INTERVAL], &showMomo, INTERVAL);
-  generateMenu(&menus[COORDS1], &showMomo, COORDS1);
-  generateMenu(&menus[COORDS2], &showMomo, COORDS2);
-  generateMenu(&menus[COORDS3], &showMomo, COORDS3);
-  generateMenu(&menus[COORDS4], &showMomo, COORDS4);
-  generateMenu(&menus[ENR1], &showMomo, ENR1);
-  generateMenu(&menus[ENR2], &showMomo, ENR2);
-  interconnexions(menus);
-
-  currentMenu = &menus[ACCUEIL];
-
-  // set up the LCD's number of columns and rows:
-  lcd.begin(8, 2);
-  showMenu(&lcd, currentMenu, false);
-  
-
-  // Setup for BUTTONS
-  for(int i=0; i<NBBUTTONS; i++) {
-    debouncer[i]=Bounce();
-    
-      // Setup the button with an internal pull-up :
-    pinMode(buttonPins[i],INPUT_PULLUP);
-  
-    // After setting up the button, setup the Bounce instance :
-    debouncer[i].attach(buttonPins[i]);
-    debouncer[i].interval(20); // interval in ms
-    debouncer[i].update();
-    buttonValues[i]=debouncer[i].read();
-  }
+  unsigned long start = millis();
+  do 
+  {
+    while (ss.available())
+      gps.encode(ss.read());
+  } while (millis() - start < ms);
 }
 
-void loop()
+static void print_float(float val, float invalid, int len, int prec)
 {
-  readBoutons(debouncer , buttonStates, buttonValues);
-  int switchActivated = buttonStatesToSwitchActivated(buttonStates);
-  switch(switchActivated) {
-    case SW1 :
-      Serial.println("SW1");
-      currentMenu = currentMenu -> sw1Connection;
-      break;
-    case SW2 :
-      Serial.println("SW2");
-      currentMenu = currentMenu -> sw2Connection;
-      break;
-    case SW3 :
-      Serial.println("SW3");
-      break;
-    case SW4 :
-      Serial.println("SW4");
-      break;
-    default :
-      break;
+  if (val == invalid)
+  {
+    while (len-- > 1)
+      Serial.print('*');
+    Serial.print(' ');
   }
-  for(int i=0; i<NBBUTTONS; i++) {
-    Serial.print("Button ");
-    Serial.print(i);
-//    Serial.print("the value : ");Serial.println(buttonValues[i]);
-//    Serial.print("the state : ");Serial.println(buttonStates[i]);
-    Serial.print("  ");
-    Serial.print(buttonValues[i]);
-    Serial.print("  ");
+  else
+  {
+    Serial.print(val, prec);
+    int vi = abs((int)val);
+    int flen = prec + (val < 0.0 ? 2 : 1); // . and -
+    flen += vi >= 1000 ? 4 : vi >= 100 ? 3 : vi >= 10 ? 2 : 1;
+    for (int i=flen; i<len; ++i)
+      Serial.print(' ');
   }
-  Serial.print("\n");
+  smartdelay(0);
+}
 
-  showMenu(&lcd, currentMenu, false);
-  delay(50);
+static void print_int(unsigned long val, unsigned long invalid, int len)
+{
+  char sz[32];
+  if (val == invalid)
+    strcpy(sz, "*******");
+  else
+    sprintf(sz, "%ld", val);
+  sz[len] = 0;
+  for (int i=strlen(sz); i<len; ++i)
+    sz[i] = ' ';
+  if (len > 0) 
+    sz[len-1] = ' ';
+  Serial.print(sz);
+  smartdelay(0);
+}
+
+static void print_date(TinyGPS &gps)
+{
+  int year;
+  byte month, day, hour, minute, second, hundredths;
+  unsigned long age;
+  gps.crack_datetime(&year, &month, &day, &hour, &minute, &second, &hundredths, &age);
+  if (age == TinyGPS::GPS_INVALID_AGE)
+    Serial.print("********** ******** ");
+  else
+  {
+    char sz[32];
+    sprintf(sz, "%02d/%02d/%02d %02d:%02d:%02d ",
+        month, day, year, hour, minute, second);
+    Serial.print(sz);
+  }
+  print_int(age, TinyGPS::GPS_INVALID_AGE, 5);
+  smartdelay(0);
+}
+
+static void print_str(const char *str, int len)
+{
+  int slen = strlen(str);
+  for (int i=0; i<len; ++i)
+    Serial.print(i<slen ? str[i] : ' ');
+  smartdelay(0);
 }
 
 
