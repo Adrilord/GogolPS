@@ -11,7 +11,7 @@ Finir implémentation initiale en C (quit le Cpp, il faut utiliser des structs) 
 	Gestion subtile des boutons --> done (but some bugs can occure) -->timing issues (work with Serial.print ??)
 	Menus de configuration --> done
 	Gestion de la configuration --> done (reste la gestion de l'enregistrement)
-	Mise à jour automatique de toutes les valeurs du mode à partir du module GPS -->
+	Mise à jour automatique de toutes les valeurs du mode à partir du module GPS --> done ?
 	Calcul autonomie -->
 	Gestion Enregistrement -->
 		Des paramètres pour les intervalles -->

@@ -49,17 +49,33 @@ void updateModelGPSdata(Model* model, TinyGPS* gps)
 	 gps->f_get_position(&model->latitude, &model->longitude, NULL);
 	 model->altitude = gps->f_altitude();
 	 model->speed = gps->f_speed_mps();
-//  int year;
-//  byte month, day, hour, minutes, second, hundredths;
-//  unsigned long fix_age;
-// 
-//  gps.crack_datetime(&year, &month, &day,
-//  &hour, &minute, &second, &hundredths, &fix_age);
-//	 gps->crack_datetime(&model->GPSDateTime.year, &model->GPSDateTime.month, &model->GPSDateTime.day,
-//	 &model->GPSDateTime.hour, &model->GPSDateTime.minute, &model->GPSDateTime.second, &model->GPSDateTime.hundredths, NULL);
+   int year;
+   byte month, day, hour, minute, second, hundredths;
+   unsigned long fix_age;
+ 
+   gps->crack_datetime(&year, &month, &day,
+   &hour, &minute, &second, &hundredths, &fix_age);
+	 model->GPSDateTime.year=year;
+   model->GPSDateTime.month=(int) month;
+   model->GPSDateTime.day=(int) day;
+   model->GPSDateTime.hour=(int) hour;
+   model->GPSDateTime.minute=(int) minute;
+   model->GPSDateTime.second=(int) second;
+   model->GPSDateTime.hundredths=(int) hundredths;
 	 model->satellites = gps->satellites();
 	 model->hdop = gps->hdop();
  }
+
+void updateModelLocaldata(Model* model)
+{
+   model->localDateTime.year=model->GPSDateTime.year;
+   model->localDateTime.month=model->GPSDateTime.month;
+   model->localDateTime.day=model->GPSDateTime.day;
+   model->localDateTime.hour=model->GPSDateTime.hour;
+   model->localDateTime.minute=model->GPSDateTime.minute;
+   model->localDateTime.second=model->GPSDateTime.second;
+   model->localDateTime.hundredths=model->GPSDateTime.hundredths;
+}
 
 void initModel(Model* model)
 {

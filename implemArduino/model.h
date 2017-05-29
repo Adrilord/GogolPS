@@ -43,6 +43,8 @@ void modelToShowModel(Model* model, ShowModel* showModel);
 
 void updateModelGPSdata(Model* model, TinyGPS* gps);
 
+void updateModelLocaldata(Model* model);
+
 void initModel(Model* model);
 
 void initShowModel(ShowModel* showModel);

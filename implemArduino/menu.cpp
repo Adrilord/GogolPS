@@ -168,25 +168,37 @@ void increaseSelectedConfigValue(Menu* menu, Model* model)
        switch(menu->selectedIDGroup) {
         case 0 :
           model->durationParcours+=3600;
+          break;
         case 1 :
           model->durationParcours+=60;
+          break;
         case 2 :
            model->durationParcours++;
+           break;
+        default :
+          break;
        }
      break; 
      case INTERVAL :
        switch(menu->selectedIDGroup) {
         case 0 :
           model->durationInterval+=6000;
+          break;
         case 1 :
           model->durationInterval+=100;
+          break;
         case 2 :
           model->durationInterval++;
+          break;
+        default :
+          break;
        }
      break;
      case ENR1:
      break;
    }
+   model->durationParcours%=99*3600;
+   model->durationInterval%=99*6000;
 }
 
 void updateMenuCases(Menu* menu, Model* model)

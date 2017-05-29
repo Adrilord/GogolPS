@@ -162,6 +162,7 @@ void loop()
 
   //Model refreshing
   updateModelGPSdata(&momo, &gps);
+  updateModelLocaldata(&momo);
   //Menu refreshing
   showMenu(&lcd, currentMenu, configBlinking);
   updateMenuCases(currentMenu, &momo);
