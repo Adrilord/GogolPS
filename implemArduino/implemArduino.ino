@@ -14,6 +14,14 @@
 #define BBP0 0
 #define BBP1 1
 #define BBPEN 2
+#define INIT 0
+#define ENG 1
+#define WAIT 2
+#define SWX 0
+#define SW1 1
+#define SW2 2
+#define SW3 3
+#define SW4 4
 
 void testsCharMngmt ()
 {
@@ -79,7 +87,41 @@ void testShowMenu(LiquidCrystal* lcd, Menu** menus)
   showMenu(lcd, menus[ENR2], false);
 }
 
-//int readBoutons(Bounce* debouncer ...)
+//3 states : 0 init, 1 engaged, 2 waiting to desengaged
+//2 values : HIGH or LOW
+void readBoutons(Bounce* debouncer , int* buttonStates, int* buttonValues)
+{
+    for(int i=0; i<NBBUTTONS; i++) {
+      //Wait mode
+      if(buttonStates[i] == 1) {
+         buttonStates[i] = 2;
+      }
+        // Update the Bounce instance :
+      debouncer[i].update();
+      int value = debouncer[i].read();
+      if ( value != buttonValues[i]) {
+        buttonValues[i] = value;
+        buttonStates[i] = (buttonStates[i] + 1)%3; //buttonStates is either 0 or 2
+      }
+  }
+}
+
+//return switchActivated
+int buttonStatesToSwitchActivated(int* buttonStates)
+{
+  if(buttonStates[BBP0]!=ENG && buttonStates[BBP1]!=ENG && buttonStates[BBPEN]==ENG) {
+    return SW1;
+  } else if (buttonStates[BBP0]==ENG && buttonStates[BBP1]!=ENG && buttonStates[BBPEN]==ENG) {
+    return SW2;
+  } else if (buttonStates[BBP0]!=ENG && buttonStates[BBP1]==ENG && buttonStates[BBPEN]==ENG) {
+    return SW3;
+  } else if (buttonStates[BBP0]==ENG && buttonStates[BBP1]==ENG && buttonStates[BBPEN]==ENG) {
+    return SW4;
+  } else {
+    return SWX;
+  }
+}
+
 
 
 // initialize the library with the numbers of the interface pins
@@ -90,12 +132,45 @@ int buttonPins[NBBUTTONS]={PBP0,PBP1,PBPEN};
 
 // Instantiate a Bounce object
 Bounce debouncer[NBBUTTONS];
-bool buttonValues[NBBUTTONS]={HIGH,HIGH,HIGH};
+int buttonValues[NBBUTTONS]={HIGH,HIGH,HIGH};
+int buttonStates[NBBUTTONS]={INIT,INIT,INIT};
 
 Model momo;
 ShowModel showMomo;
 Menu menus[10];
 Menu* currentMenu;
+
+void testButtons()
+{
+  readBoutons(debouncer , buttonStates, buttonValues);
+  int switchActivated = buttonStatesToSwitchActivated(buttonStates);
+  switch(switchActivated) {
+    case SW1 :
+      Serial.println("SW1");
+      break;
+    case SW2 :
+      Serial.println("SW2");
+      break;
+    case SW3 :
+      Serial.println("SW3");
+      break;
+    case SW4 :
+      Serial.println("SW4");
+      break;
+    default :
+      break;
+  }
+  for(int i=0; i<NBBUTTONS; i++) {
+    Serial.print("Button ");
+    Serial.print(i);
+//    Serial.print("the value : ");Serial.println(buttonValues[i]);
+//    Serial.print("the state : ");Serial.println(buttonStates[i]);
+    Serial.print("  ");
+    Serial.print(buttonValues[i]);
+    Serial.print("  ");
+  }
+  Serial.print("\n");
+}
 
 void setup()
 {
@@ -124,6 +199,7 @@ void setup()
   showMenu(&lcd, currentMenu, false);
   
 
+  // Setup for BUTTONS
   for(int i=0; i<NBBUTTONS; i++) {
     debouncer[i]=Bounce();
     
@@ -132,7 +208,7 @@ void setup()
   
     // After setting up the button, setup the Bounce instance :
     debouncer[i].attach(buttonPins[i]);
-    debouncer[i].interval(5); // interval in ms
+    debouncer[i].interval(20); // interval in ms
     debouncer[i].update();
     buttonValues[i]=debouncer[i].read();
   }
@@ -140,21 +216,39 @@ void setup()
 
 void loop()
 {
-  for(int i=0; i<NBBUTTONS; i++) {
-        // Update the Bounce instance :
-      debouncer[i].update();
-      int value = debouncer[i].read();
-      if ( value != buttonValues[i]) {
-        buttonValues[i] = value;
-        Serial.println("test");
-        Serial.println(i);
-        if(i==BBPEN) {
-          currentMenu = currentMenu->sw1Connection;
-          showMenu(&lcd, currentMenu, false); 
-        }
-      } 
+  readBoutons(debouncer , buttonStates, buttonValues);
+  int switchActivated = buttonStatesToSwitchActivated(buttonStates);
+  switch(switchActivated) {
+    case SW1 :
+      Serial.println("SW1");
+      currentMenu = currentMenu -> sw1Connection;
+      break;
+    case SW2 :
+      Serial.println("SW2");
+      currentMenu = currentMenu -> sw2Connection;
+      break;
+    case SW3 :
+      Serial.println("SW3");
+      break;
+    case SW4 :
+      Serial.println("SW4");
+      break;
+    default :
+      break;
   }
-  delay(100);
+  for(int i=0; i<NBBUTTONS; i++) {
+    Serial.print("Button ");
+    Serial.print(i);
+//    Serial.print("the value : ");Serial.println(buttonValues[i]);
+//    Serial.print("the state : ");Serial.println(buttonStates[i]);
+    Serial.print("  ");
+    Serial.print(buttonValues[i]);
+    Serial.print("  ");
+  }
+  Serial.print("\n");
+
+  showMenu(&lcd, currentMenu, false);
+  delay(50);
 }
 
 

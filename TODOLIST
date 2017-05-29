@@ -8,6 +8,7 @@ Finir implémentation initiale en C (quit le Cpp, il faut utiliser des structs) 
 	Commencer l'implem arduino --> done
 	Se séparer de l'utilisation de printf et les fonctions str (trop lourd) --> done
 	Finir l'adaptation de menu.c/h et model.c/h pour Arduino --> done
-	Gestion subtile des boutons --> en cours
+	Gestion subtile des boutons --> done (but some bugs can occure) -->timing issues (work with Serial.print ??)
 	Menus de configuration --> en cours
 	Mise à jour automatique de toutes les valeurs du mode à partir du module GPS -->
+	Calcul autonomie -->
