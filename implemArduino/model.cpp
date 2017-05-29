@@ -75,6 +75,10 @@ void updateModelLocaldata(Model* model)
    model->localDateTime.minute=model->GPSDateTime.minute;
    model->localDateTime.second=model->GPSDateTime.second;
    model->localDateTime.hundredths=model->GPSDateTime.hundredths;
+
+   double batterieVolt = (analogRead(PBATT)*6.2)/1023.f;
+   model-> autonomy = (int) (( (float)(batterieVolt - 0.f) / 5.0) * 100.f);
+   if(model->autonomy < 0) model-> autonomy = 0;
 }
 
 void initModel(Model* model)

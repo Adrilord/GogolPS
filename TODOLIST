@@ -12,9 +12,16 @@ Finir implémentation initiale en C (quit le Cpp, il faut utiliser des structs) 
 	Menus de configuration --> done
 	Gestion de la configuration --> done (reste la gestion de l'enregistrement)
 	Mise à jour automatique de toutes les valeurs du mode à partir du module GPS --> done ?
-	Calcul autonomie -->
+	Calcul autonomie --> done mais approximatif
+	Test SD -->
+		libérer de la mémoire -->
+			créer dynamiquement les menus -->
 	Gestion Enregistrement -->
 		Des paramètres pour les intervalles -->
 		Des données GPS -->
+			En brut -->
+			En KML -->
 	Améliorer le clignotage de config (ralentir) -->
+	Améliorer réactivité boutons -->
+	Documentation, corrections, nettoyage -->
 

@@ -4,6 +4,9 @@
 #include "datetime.h"
 #include "charmanagement.h"
 #include <TinyGPS.h>
+#include <Arduino.h>
+
+#define PBATT 0
 
 typedef struct Model {
 	//local prog data

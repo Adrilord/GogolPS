@@ -9,7 +9,7 @@ void strupdate(char* dest, unsigned int begin, char* src, unsigned int sizeSrc)
   }
 }
 
-void int2TabChar(char* dest, unsigned int sizeDest, int src)
+void int2TabChar(char* dest, unsigned int sizeDest, unsigned int src)
 {
   int i=0;
   for(i=sizeDest-1; i>=0; i--) {
@@ -18,7 +18,7 @@ void int2TabChar(char* dest, unsigned int sizeDest, int src)
   }
 }
 
-void long2TabChar(char* dest, unsigned int sizeDest, long src)
+void long2TabChar(char* dest, unsigned int sizeDest, unsigned long src)
 {
   int i=0;
   for(i=sizeDest-1; i>=0; i--) {

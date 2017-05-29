@@ -1,7 +1,7 @@
 #include "menu.h"
 #include <Arduino.h>
 
- void generateMenu(Menu* menu, Model* model, MENU_TYPE menu_type)
+ void generateMenu(Menu* menu, Model* model, MENU_TYPE menu_type, char isSDOK[2])
  {
    menu->menu_type=menu_type;
    ShowModel showModel;
@@ -26,6 +26,7 @@
 	 menu->selectionIDGroupCases[15]=-1;
 	 menu->configureMode=FALSE;
 	 menu->maxSelectionGroupId=-1;
+   strupdate(showModel.isSDOK,0,isSDOK,2);
 	 switch(menu_type) {
 		 case ACCUEIL :
 			 strupdate(cases,0,showModel.localShowDateTime.hour,2);

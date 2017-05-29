@@ -1,6 +1,7 @@
 #include <TinyGPS.h>
 #include <LiquidCrystal.h>
 #include <SoftwareSerial.h>
+#include <SD.h>
 #include <Bounce2.h>
 #include "model.h"
 #include "datetime.h"
@@ -26,6 +27,7 @@
 #define SW4 4
 #define GPSRX 2
 #define GPSTX 3
+#define PSD 10
 
 void testsCharMngmt ();
 
@@ -44,10 +46,6 @@ void testButtons();
 
 //FOR THE GPS
 static void smartdelay(unsigned long ms);
-static void print_float(float val, float invalid, int len, int prec);
-static void print_int(unsigned long val, unsigned long invalid, int len);
-static void print_date(TinyGPS &gps);
-static void print_str(const char *str, int len);
 
 // initialize the library with the numbers of the interface pins
 LiquidCrystal lcd(4, 5, 6, 7, 8, 9);
@@ -74,18 +72,26 @@ void setup()
 {
   Serial.begin(9600);
 
+  char isSDOK[2];
+  isSDOK[0]="N";
+  isSDOK[1]="O";
+  if (SD.begin(PSD)) { //Port 10
+    isSDOK[0]="O";
+    isSDOK[1]="K";
+    return;
+  }
   // init menus and model
   initModel(&momo);
-  generateMenu(&menus[ACCUEIL], &momo, ACCUEIL);
-  generateMenu(&menus[DATE], &momo, DATE);
-  generateMenu(&menus[PARCOURS], &momo, PARCOURS);
-  generateMenu(&menus[INTERVAL], &momo, INTERVAL);
-  generateMenu(&menus[COORDS1], &momo, COORDS1);
-  generateMenu(&menus[COORDS2], &momo, COORDS2);
-  generateMenu(&menus[COORDS3], &momo, COORDS3);
-  generateMenu(&menus[COORDS4], &momo, COORDS4);
-  generateMenu(&menus[ENR1], &momo, ENR1);
-  generateMenu(&menus[ENR2], &momo, ENR2);
+  generateMenu(&menus[ACCUEIL], &momo, ACCUEIL, isSDOK);
+  generateMenu(&menus[DATE], &momo, DATE, isSDOK);
+  generateMenu(&menus[PARCOURS], &momo, PARCOURS, isSDOK);
+  generateMenu(&menus[INTERVAL], &momo, INTERVAL, isSDOK);
+  generateMenu(&menus[COORDS1], &momo, COORDS1, isSDOK);
+  generateMenu(&menus[COORDS2], &momo, COORDS2, isSDOK);
+  generateMenu(&menus[COORDS3], &momo, COORDS3, isSDOK);
+  generateMenu(&menus[COORDS4], &momo, COORDS4, isSDOK);
+  generateMenu(&menus[ENR1], &momo, ENR1, isSDOK);
+  generateMenu(&menus[ENR2], &momo, ENR2, isSDOK);
   interconnexions(menus);
 
   currentMenu = &menus[ACCUEIL];
@@ -316,68 +322,3 @@ static void smartdelay(unsigned long ms)
       gps.encode(ss.read());
   } while (millis() - start < ms);
 }
-
-static void print_float(float val, float invalid, int len, int prec)
-{
-  if (val == invalid)
-  {
-    while (len-- > 1)
-      Serial.print('*');
-    Serial.print(' ');
-  }
-  else
-  {
-    Serial.print(val, prec);
-    int vi = abs((int)val);
-    int flen = prec + (val < 0.0 ? 2 : 1); // . and -
-    flen += vi >= 1000 ? 4 : vi >= 100 ? 3 : vi >= 10 ? 2 : 1;
-    for (int i=flen; i<len; ++i)
-      Serial.print(' ');
-  }
-  smartdelay(0);
-}
-
-static void print_int(unsigned long val, unsigned long invalid, int len)
-{
-  char sz[32];
-  if (val == invalid)
-    strcpy(sz, "*******");
-  else
-    sprintf(sz, "%ld", val);
-  sz[len] = 0;
-  for (int i=strlen(sz); i<len; ++i)
-    sz[i] = ' ';
-  if (len > 0) 
-    sz[len-1] = ' ';
-  Serial.print(sz);
-  smartdelay(0);
-}
-
-static void print_date(TinyGPS &gps)
-{
-  int year;
-  byte month, day, hour, minute, second, hundredths;
-  unsigned long age;
-  gps.crack_datetime(&year, &month, &day, &hour, &minute, &second, &hundredths, &age);
-  if (age == TinyGPS::GPS_INVALID_AGE)
-    Serial.print("********** ******** ");
-  else
-  {
-    char sz[32];
-    sprintf(sz, "%02d/%02d/%02d %02d:%02d:%02d ",
-        month, day, year, hour, minute, second);
-    Serial.print(sz);
-  }
-  print_int(age, TinyGPS::GPS_INVALID_AGE, 5);
-  smartdelay(0);
-}
-
-static void print_str(const char *str, int len)
-{
-  int slen = strlen(str);
-  for (int i=0; i<len; ++i)
-    Serial.print(i<slen ? str[i] : ' ');
-  smartdelay(0);
-}
-
-

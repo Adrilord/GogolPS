@@ -25,7 +25,7 @@ typedef struct Menu{
 
 void showMenu(Menu menu);
 
-void generateMenu(Menu* menu, Model* model, MENU_TYPE menu_type);
+void generateMenu(Menu* menu, Model* model, MENU_TYPE menu_type, char isSDOK[2]);
 
 void interconnexions(Menu menus[10]);
 
