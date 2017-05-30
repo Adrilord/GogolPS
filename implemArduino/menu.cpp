@@ -1,7 +1,7 @@
 #include "menu.h"
 #include <Arduino.h>
 
- void generateMenu(Menu* menu, Model* model, MENU_TYPE menu_type, char isSDOK[2])
+ void generateMenu(Menu* menu, Model* model, MENU_TYPE menu_type)
  {
    menu->menu_type=menu_type;
    ShowModel showModel;
@@ -26,7 +26,6 @@
 	 menu->selectionIDGroupCases[15]=-1;
 	 menu->configureMode=FALSE;
 	 menu->maxSelectionGroupId=-1;
-   strupdate(showModel.isSDOK,0,isSDOK,2);
 	 switch(menu_type) {
 		 case ACCUEIL :
 			 strupdate(cases,0,showModel.localShowDateTime.hour,2);
@@ -38,6 +37,8 @@
 			 strupdate(cases,12,showModel.autonomy,3);
 			 strupdate(cases,15,"%",1);
 			 menu->isConfigurable=FALSE;
+       menu->sw1Connection=PARCOURS;
+       menu->sw2Connection=DATE;
 		 break;
 		 case DATE :
 			 strupdate(cases,0,"SD",2);
@@ -49,6 +50,8 @@
        strupdate(cases,10,"  ",2);
 			 strupdate(cases,12,showModel.localShowDateTime.year,4);
 			 menu->isConfigurable=FALSE;
+       menu->sw1Connection=PARCOURS;
+       menu->sw2Connection=ACCUEIL;
 		 break;
 		 case PARCOURS :
 			 strupdate(cases,0,"PARCOURS",8);
@@ -61,6 +64,8 @@
 			 menu->selectionIDGroupCases[14]=2;
 			 menu->selectionIDGroupCases[15]=2;
 			 menu->maxSelectionGroupId=2;
+       menu->sw1Connection=COORDS1;
+       menu->sw2Connection=INTERVAL;
 		 break; 
 		 case INTERVAL :
 			 strupdate(cases,0,"INTERVms",8);
@@ -73,6 +78,8 @@
 			 menu->selectionIDGroupCases[14]=2;
 			 menu->selectionIDGroupCases[15]=2;
 			 menu->maxSelectionGroupId=2;
+       menu->sw1Connection=COORDS1;
+       menu->sw2Connection=PARCOURS;
 		 break;
 		 case COORDS1 :
 			 strupdate(cases,0,"LA",2);
@@ -80,6 +87,8 @@
 			 strupdate(cases,8,"LO",2);
 			 strupdate(cases,10,showModel.longitude,6);
 			 menu->isConfigurable=FALSE;
+       menu->sw1Connection=ENR1;
+       menu->sw2Connection=COORDS2;
 		 break; 
 		 case COORDS2 :
 			 strupdate(cases,0,"AL",2);
@@ -87,19 +96,25 @@
 			 strupdate(cases,8,"CO",2);
 			 strupdate(cases,10,showModel.course,6);
 			 menu->isConfigurable=FALSE;
+       menu->sw1Connection=ENR1;
+       menu->sw2Connection=COORDS3;
 		 break;
 		 case COORDS3 :
 			 strupdate(cases,0,"SP",2);
 			 strupdate(cases,2,showModel.speed,6);
-			 strupdate(cases,8,"SATT ",5);
-			 strupdate(cases,13,showModel.satellites,2);
+			 strupdate(cases,8,"SATT  ",6);
+			 strupdate(cases,14,showModel.satellites,2);
 			 menu->isConfigurable=FALSE;
+       menu->sw1Connection=ENR1;
+       menu->sw2Connection=COORDS4;
 		 break;
 		 case COORDS4 :
 			 strupdate(cases,0,"HD",2);
 			 strupdate(cases,2,showModel.hdop,6);
 			 strupdate(cases,8,"        ",8);
 			 menu->isConfigurable=FALSE;
+       menu->sw1Connection=ENR1;
+       menu->sw2Connection=COORDS1;
 		 break;
 		 case ENR1:
 			 strupdate(cases,0,"START   ",8);
@@ -115,14 +130,20 @@
 			 menu->selectionIDGroupCases[10]=1;
 			 menu->selectionIDGroupCases[11]=1;
 			 menu->maxSelectionGroupId=1;
+       menu->sw1Connection=ACCUEIL;
+       menu->sw2Connection=ENR2;
 		 break;
 		 case ENR2:
 			 strupdate(cases,0,showModel.recordFilename,16);
 			 menu->isConfigurable=FALSE;
+       menu->sw1Connection=ACCUEIL;
+       menu->sw2Connection=ENR1;
 		 break;
 		 default :
 			 strupdate(cases,0,"SECRET  MENU",12);
 			 menu->isConfigurable=FALSE;
+       menu->sw1Connection=ACCUEIL;
+       menu->sw2Connection=ACCUEIL;
 		 break;
 	 }
    if(menu->isConfigurable == TRUE) {
@@ -132,30 +153,6 @@
    }
    strupdate(menu->cases,0,cases,16);
  }
-
-void interconnexions(Menu menus[10])
-{
-	menus[ACCUEIL].sw1Connection = &menus[PARCOURS];
-	menus[ACCUEIL].sw2Connection = &menus[DATE];
-	menus[DATE].sw1Connection = &menus[PARCOURS];
-	menus[DATE].sw2Connection = &menus[ACCUEIL];
-	menus[PARCOURS].sw1Connection = &menus[COORDS1];
-	menus[PARCOURS].sw2Connection = &menus[INTERVAL];
-	menus[INTERVAL].sw1Connection = &menus[COORDS1];
-	menus[INTERVAL].sw2Connection = &menus[PARCOURS];
-	menus[COORDS1].sw1Connection = &menus[ENR1];
-	menus[COORDS1].sw2Connection = &menus[COORDS2];
-	menus[COORDS2].sw1Connection = &menus[ENR1];
-	menus[COORDS2].sw2Connection = &menus[COORDS3];
-	menus[COORDS3].sw1Connection = &menus[ENR1];
-	menus[COORDS3].sw2Connection = &menus[COORDS4];
-	menus[COORDS4].sw1Connection = &menus[ENR1];
-	menus[COORDS4].sw2Connection = &menus[COORDS1];
-	menus[ENR1].sw1Connection = &menus[ACCUEIL];
-	menus[ENR1].sw2Connection = &menus[ENR2];
-	menus[ENR2].sw1Connection = &menus[ACCUEIL];
-	menus[ENR2].sw2Connection = &menus[ENR1];
-}
 
 void increaseSelection(Menu* menu)
 {
@@ -252,8 +249,8 @@ void updateMenuCases(Menu* menu, Model* model)
      case COORDS3 :
        strupdate(cases,0,"SP",2);
        strupdate(cases,2,showModel.speed,6);
-       strupdate(cases,8,"SATT ",5);
-       strupdate(cases,13,showModel.satellites,2);
+       strupdate(cases,8,"SATT  ",6);
+       strupdate(cases,14,showModel.satellites,2);
      break;
      case COORDS4 :
        strupdate(cases,0,"HD",2);

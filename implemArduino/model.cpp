@@ -41,6 +41,12 @@ void modelToShowModel(Model* model, ShowModel* showModel)
   strupdate(showModel->recordFilename,10,showModel->localShowDateTime.hour,2);
   strupdate(showModel->recordFilename,12,showModel->localShowDateTime.minute,2);
   strupdate(showModel->recordFilename,14,showModel->localShowDateTime.second,2);
+
+  if(model->isSDOK == TRUE) {
+    strupdate(showModel->isSDOK,0,"OK",2);
+  } else {
+    strupdate(showModel->isSDOK,0,"NO",2);
+  }
 }
 
 void updateModelGPSdata(Model* model, TinyGPS* gps)
@@ -104,6 +110,7 @@ void initModel(Model* model)
 	model->GPSDateTime.hundredths=0;
 	model->satellites=0;
 	model->hdop=0;
+  model->isSDOK=FALSE;
 }
 
 void initShowModel(ShowModel* showModel)
@@ -122,7 +129,7 @@ void initShowModel(ShowModel* showModel)
 	strupdate(showModel->hdop,0,"0",1);
 	//recording
 	strupdate(showModel->recordFilename,0,"0",1);
-  strupdate(showModel->isSDOK,0,"NO",2);
+  strupdate(showModel->isSDOK,0,"??",2);
 }
 
 

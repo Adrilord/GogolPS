@@ -1,7 +1,7 @@
 Tests librairies GPS Arduino --> Thibault done
 test implem Cpp -->
 Finir implémentation initiale en C (quit le Cpp, il faut utiliser des structs) --> Adrien
-	Affichage de tous les menus en console -->
+	Affichage de tous les menus en console --> done
 		gestion des cases[16] --> DONE
 		guid --> done
 		interconnections --> done
@@ -11,12 +11,12 @@ Finir implémentation initiale en C (quit le Cpp, il faut utiliser des structs) 
 	Gestion subtile des boutons --> done (but some bugs can occure) -->timing issues (work with Serial.print ??)
 	Menus de configuration --> done
 	Gestion de la configuration --> done (reste la gestion de l'enregistrement)
-	Mise à jour automatique de toutes les valeurs du mode à partir du module GPS --> done ?
+	Mise à jour automatique de toutes les valeurs du mode à partir du module GPS --> done ? oui
 	Calcul autonomie --> done mais approximatif
-	Test SD -->
-		libérer de la mémoire -->
-			créer dynamiquement les menus -->
-	Gestion Enregistrement -->
+	Test SD --> done
+		libérer de la mémoire --> done
+			créer dynamiquement les menus --> done
+	Gestion Enregistrement --> PB SD ne marche pas
 		Des paramètres pour les intervalles -->
 		Des données GPS -->
 			En brut -->

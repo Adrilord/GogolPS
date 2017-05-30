@@ -52,7 +52,7 @@ LiquidCrystal lcd(4, 5, 6, 7, 8, 9);
 
 //GPS
 TinyGPS gps;
-SoftwareSerial ss(GPSRX, GPSTX);
+SoftwareSerial ss(GPSTX, GPSRX);
 
 //button pins
 int buttonPins[NBBUTTONS]={PBP0,PBP1,PBPEN};
@@ -63,42 +63,29 @@ int buttonValues[NBBUTTONS]={HIGH,HIGH,HIGH};
 int buttonStates[NBBUTTONS]={INIT,INIT,INIT};
 
 Model momo;
-Menu menus[10];
-Menu* currentMenu;
+Menu currentMenu;
 
 int configBlinking=FALSE;
+
+char isSDOK[2];
 
 void setup()
 {
   Serial.begin(9600);
-
-  char isSDOK[2];
-  isSDOK[0]="N";
-  isSDOK[1]="O";
-  if (SD.begin(PSD)) { //Port 10
-    isSDOK[0]="O";
-    isSDOK[1]="K";
-    return;
-  }
+  
   // init menus and model
   initModel(&momo);
-  generateMenu(&menus[ACCUEIL], &momo, ACCUEIL, isSDOK);
-  generateMenu(&menus[DATE], &momo, DATE, isSDOK);
-  generateMenu(&menus[PARCOURS], &momo, PARCOURS, isSDOK);
-  generateMenu(&menus[INTERVAL], &momo, INTERVAL, isSDOK);
-  generateMenu(&menus[COORDS1], &momo, COORDS1, isSDOK);
-  generateMenu(&menus[COORDS2], &momo, COORDS2, isSDOK);
-  generateMenu(&menus[COORDS3], &momo, COORDS3, isSDOK);
-  generateMenu(&menus[COORDS4], &momo, COORDS4, isSDOK);
-  generateMenu(&menus[ENR1], &momo, ENR1, isSDOK);
-  generateMenu(&menus[ENR2], &momo, ENR2, isSDOK);
-  interconnexions(menus);
+  generateMenu(&currentMenu, &momo, ACCUEIL);
 
-  currentMenu = &menus[ACCUEIL];
+  //init SD
+  momo.isSDOK=FALSE;
+  if (SD.begin(PSD)) { //Port 10
+    momo.isSDOK=TRUE;
+  }
 
   // set up the LCD's number of columns and rows:
   lcd.begin(8, 2);
-  showMenu(&lcd, currentMenu, false);
+  showMenu(&lcd, &currentMenu, false);
   
 
   // Setup for BUTTONS
@@ -126,30 +113,30 @@ void loop()
   switch(switchActivated) {
     case SW1 :
       Serial.println("SW1");
-      if(currentMenu->configureMode == FALSE) {
-        currentMenu = currentMenu -> sw1Connection;
+      if(currentMenu.configureMode == FALSE) {
+        generateMenu(&currentMenu, &momo, currentMenu.sw1Connection);
       }
       break;
     case SW2 :
       Serial.println("SW2");
-      if(currentMenu->configureMode == FALSE) {
-        currentMenu = currentMenu -> sw2Connection;
+      if(currentMenu.configureMode == FALSE) {
+        generateMenu(&currentMenu, &momo, currentMenu.sw2Connection);
       } else {
-        increaseSelectedConfigValue(currentMenu,&momo);
+        increaseSelectedConfigValue(&currentMenu,&momo);
       }
       break;
     case SW3 :
       Serial.println("SW3");
-      if(currentMenu->configureMode==TRUE) {
-        increaseSelection(currentMenu);
+      if(currentMenu.configureMode==TRUE) {
+        increaseSelection(&currentMenu);
       }
       break;
     case SW4 :
       Serial.println("SW4");
-      if(currentMenu->isConfigurable == TRUE && currentMenu->configureMode==FALSE) {
-        currentMenu->configureMode=TRUE;
+      if(currentMenu.isConfigurable == TRUE && currentMenu.configureMode==FALSE) {
+        currentMenu.configureMode=TRUE;
       } else {
-        currentMenu->configureMode=FALSE;
+        currentMenu.configureMode=FALSE;
       }
       break;
     default :
@@ -170,15 +157,15 @@ void loop()
   updateModelGPSdata(&momo, &gps);
   updateModelLocaldata(&momo);
   //Menu refreshing
-  showMenu(&lcd, currentMenu, configBlinking);
-  updateMenuCases(currentMenu, &momo);
+  showMenu(&lcd, &currentMenu, configBlinking);
+  updateMenuCases(&currentMenu, &momo);
   //Config blinking
-  if(currentMenu->isConfigurable == TRUE && currentMenu->configureMode==TRUE) {
+  if(currentMenu.isConfigurable == TRUE && currentMenu.configureMode==TRUE) {
       configBlinking=(configBlinking + 1) %2; 
   } else {
       configBlinking=FALSE;
   }
-  delay(50);
+  smartdelay(50);
 }
 
 void testsCharMngmt ()

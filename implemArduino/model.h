@@ -7,6 +7,8 @@
 #include <Arduino.h>
 
 #define PBATT 0
+#define TRUE 0
+#define FALSE 1
 
 typedef struct Model {
 	//local prog data
@@ -14,6 +16,7 @@ typedef struct Model {
 	Datetime localDateTime;
 	long durationParcours; //in seconds
 	long durationInterval; //in milliseconds
+  int isSDOK;
 	//GPS data
 	float latitude, longitude; //in degrees
 	float altitude; //in meters
@@ -22,6 +25,7 @@ typedef struct Model {
 	Datetime GPSDateTime;
 	short satellites;
 	long hdop;
+  
 }Model;
 
 typedef struct ShowModel {

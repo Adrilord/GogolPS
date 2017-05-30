@@ -18,16 +18,14 @@ typedef struct Menu{
 	int maxSelectionGroupId;
 	int isConfigurable; //0 (TRUE)
 	int configureMode; // avec BPEN+BP1+BP0 (sw4), 0->normal, 1->config
-	struct Menu* sw1Connection; //BPEN
-	struct Menu* sw2Connection; //BPEN+BP0
+	MENU_TYPE sw1Connection; //BPEN
+	MENU_TYPE sw2Connection; //BPEN+BP0
   MENU_TYPE menu_type;
 }Menu;
 
 void showMenu(Menu menu);
 
-void generateMenu(Menu* menu, Model* model, MENU_TYPE menu_type, char isSDOK[2]);
-
-void interconnexions(Menu menus[10]);
+void generateMenu(Menu* menu, Model* model, MENU_TYPE menu_type);
 
 void increaseSelection(Menu* menu);
 
