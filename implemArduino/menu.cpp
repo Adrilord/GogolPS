@@ -68,7 +68,7 @@
        menu->sw2Connection=INTERVAL;
 		 break; 
 		 case INTERVAL :
-			 strupdate(cases,0,"INTERVms",8);
+			 strupdate(cases,0,"INTERVcs",8);
        strupdate(cases,8,showModel.durationInterval,8);
 			 menu->isConfigurable=TRUE;
 			 menu->selectionIDGroupCases[8]=0;
@@ -195,8 +195,8 @@ void increaseSelectedConfigValue(Menu* menu, Model* model)
      case ENR1:
      break;
    }
-   model->durationParcours%=99*3600;
-   model->durationInterval%=99*6000;
+   model->durationParcours%=(long) 99*3600;
+   model->durationInterval%=(long) 99*6000;
 }
 
 void updateMenuCases(Menu* menu, Model* model)
@@ -231,7 +231,7 @@ void updateMenuCases(Menu* menu, Model* model)
        strupdate(cases,8,showModel.durationParcours,8);
      break; 
      case INTERVAL :
-       strupdate(cases,0,"INTERVms",8);
+       strupdate(cases,0,"INTERVcs",8);
        strupdate(cases,8,showModel.durationInterval,8);
      break;
      case COORDS1 :

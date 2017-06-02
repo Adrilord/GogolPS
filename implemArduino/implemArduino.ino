@@ -7,6 +7,7 @@
 #include "datetime.h"
 #include "menu.h"
 #include "charmanagement.h"
+#include "iomanagement.h"
 
 #define ROWS 2
 #define COLS 8
@@ -67,6 +68,7 @@ Menu currentMenu;
 
 int configBlinking=FALSE;
 
+RecordConf recordConf;
 char isSDOK[2];
 
 void setup()
@@ -82,6 +84,7 @@ void setup()
   if (SD.begin(PSD)) { //Port 10
     momo.isSDOK=TRUE;
   }
+  initRecordConf(&recordConf, &momo);
 
   // set up the LCD's number of columns and rows:
   lcd.begin(8, 2);
@@ -129,6 +132,8 @@ void loop()
       Serial.println("SW3");
       if(currentMenu.configureMode==TRUE) {
         increaseSelection(&currentMenu);
+        recordParams(&recordConf);
+        readParams(&momo);
       }
       break;
     case SW4 :

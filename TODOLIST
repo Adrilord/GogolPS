@@ -16,12 +16,14 @@ Finir implémentation initiale en C (quit le Cpp, il faut utiliser des structs) 
 	Test SD --> done
 		libérer de la mémoire --> done
 			créer dynamiquement les menus --> done
-	Gestion Enregistrement --> PB SD ne marche pas
+	Gestion Enregistrement --> PB SD ne marche pas --> réglé
+		PB insolvable de mémoire ..
 		Des paramètres pour les intervalles -->
+				PB ajout minutes à INTERVms -->
 		Des données GPS -->
 			En brut -->
 			En KML -->
-	Améliorer le clignotage de config (ralentir) -->
-	Améliorer réactivité boutons -->
+	Améliorer le clignotage de config (ralentir) --> abandon
+	Améliorer réactivité boutons --> abandon
 	Documentation, corrections, nettoyage -->
 

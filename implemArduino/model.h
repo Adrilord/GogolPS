@@ -25,7 +25,6 @@ typedef struct Model {
 	Datetime GPSDateTime;
 	short satellites;
 	long hdop;
-  
 }Model;
 
 typedef struct ShowModel {
