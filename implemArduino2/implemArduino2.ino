@@ -80,6 +80,7 @@ char filename[18];
 int compteur=0;
 
 File pathFile;
+bool fileOpened;
 
 void setup() {
     
@@ -148,19 +149,19 @@ void loop() {
           readPath();
        }
        lcd.clear();
+       break;
+     case SW4 :
+        Serial.print(longitude);
+        Serial.print(",");
+        Serial.print(latitude);
+        Serial.print(",");
+        Serial.println(altitude);
+        break;
     default :
       break;
       
   }
-//  for(int i=0; i<NBBUTTONS; i++) {
-//    Serial.print("Button ");
-//    Serial.print(i);
-//    Serial.print(" the value : ");Serial.print(buttonValues[i]);
-//    Serial.print(" the state : ");Serial.print(buttonStates[i]);
-//    Serial.print(" ");
-//    Serial.print(currentMenu);
-//    Serial.print("\n");
-//  }
+
   switch(currentMenu) {
       case ACCUEIL :
         lcd.print("BAT");
@@ -211,8 +212,18 @@ void loop() {
   default:
   break; 
   }
+
+  if(fileOpened){
+    if(compteur%21==0){
+      pathFile.print(longitude);
+      pathFile.print(",");
+      pathFile.print(latitude);
+      pathFile.print(",");
+      pathFile.println(altitude);
+    }
+  }
  
- compteur+=compteur;
+ compteur=(compteur+1)%21;
  Serial.println(compteur);
  smartdelay(50);  
 }
@@ -234,7 +245,6 @@ void readBoutons(Bounce* debouncer , int* buttonStates, int* buttonValues)
   }
 }
 
-//return switchActivated
 int buttonStatesToSwitchActivated(int* buttonStates)
 {
   if(buttonStates[BBP0]!=ENG && buttonStates[BBP1]!=ENG && buttonStates[BBPEN]==ENG) {
@@ -251,28 +261,6 @@ int buttonStatesToSwitchActivated(int* buttonStates)
 }
 
 
-//void recordParams(RecordConf* recordConf)
-//{
-//  SD.remove("params.info");
-//  File myFile;
-//  // if the file opened okay, write to it:
-//  myFile = SD.open("params.info", FILE_WRITE);
-//  if (myFile) {
-//    Serial.print("Writing to params.info...");
-//    myFile.println(recordConf->model->durationParcours);
-//    myFile.println(recordConf->model->durationInterval);
-//    // close the file:
-//    myFile.close();
-//    Serial.println("done.");
-//  } else {
-//    // if the file didn't open, print an error:
-//    Serial.println("error opening params.info");
-//  }
-//  myFile.close();
-//}
-//
-
-
 static void smartdelay(unsigned long ms)
 {
   unsigned long start = millis();
@@ -286,26 +274,21 @@ static void smartdelay(unsigned long ms)
 
 void savePath()
 {
-  if(compteur%10==0){
-  pathFile=SD.open("test_file.kml",FILE_WRITE);
-  pathFile.print(longitude);
-  pathFile.print(",");
-  pathFile.print(latitude);
-  pathFile.print(",");
-  pathFile.print(altitude);
+  fileOpened=1;
+  pathFile=SD.open("pathFile.txt",FILE_WRITE); //pas de caractères spéciaux dans le nom du fichier!
   Serial.println("File created");
-  }
 }
 
 void closePath(){
 
     pathFile.close();
+    fileOpened=0;
     Serial.println("File closed");
   
 }
 
 void readPath(){
-  SD.open("test_file.kml",FILE_READ);
+  SD.open("pathFile.txt",FILE_READ);
   if (pathFile) 
   {
     while (pathFile.available())
