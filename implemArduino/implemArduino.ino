@@ -243,8 +243,8 @@ void readBoutons(Bounce* debouncer , int* buttonStates, int* buttonValues)
 {
     for(int i=0; i<NBBUTTONS; i++) {
       //Wait mode
-      if(buttonStates[i] == 1) {
-         buttonStates[i] = 2;
+      if(buttonStates[i] == ENG) {
+         buttonStates[i] = WAIT;
       }
         // Update the Bounce instance :
       debouncer[i].update();

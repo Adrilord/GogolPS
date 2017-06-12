@@ -29,7 +29,7 @@
 #define COORDS1 1
 #define COORDS2 2
 #define ENR 3
-
+#define TEMPS_INTERV 5000 // en millis
 
 
 // initialize the library with the numbers of the interface pins
@@ -56,7 +56,7 @@ int currentMenu=ACCUEIL;
 
 void testButtons();
 
-void savePath();
+void initPath();
 
 void closePath();
 
@@ -81,6 +81,8 @@ int compteur=0;
 
 File pathFile;
 bool fileOpened;
+
+long timerInterv = millis();
 
 void setup() {
     
@@ -135,7 +137,7 @@ void loop() {
 
         started=!started;
         if(started){
-        savePath();
+        initPath();
         }else{
         closePath();
        }
@@ -214,17 +216,26 @@ void loop() {
   }
 
   if(fileOpened){
-    if(compteur%21==0){
-      pathFile.print(longitude);
+    if(millis() - timerInterv > TEMPS_INTERV){
+      pathFile.print(longitude,10);
       pathFile.print(",");
-      pathFile.print(latitude);
+      pathFile.print(latitude,10);
       pathFile.print(",");
-      pathFile.println(altitude);
+      pathFile.print(altitude,10);
+      pathFile.print(",");
+      pathFile.print(gps.satellites());
+      pathFile.print(",");
+      pathFile.print(heure);
+      pathFile.print(",");
+      pathFile.print(minute);
+      pathFile.print(",");
+      pathFile.print(secondes);
+      pathFile.print(",");
+      pathFile.println(gps.hdop());
+      Serial.println("Printing data");
+      timerInterv = millis();
     }
   }
- 
- compteur=(compteur+1)%21;
- Serial.println(compteur);
  smartdelay(50);  
 }
 
@@ -272,9 +283,10 @@ static void smartdelay(unsigned long ms)
 }
 
 
-void savePath()
+void initPath()
 {
   fileOpened=1;
+  SD.remove("pathFile.txt");
   pathFile=SD.open("pathFile.txt",FILE_WRITE); //pas de caractères spéciaux dans le nom du fichier!
   Serial.println("File created");
 }
@@ -288,7 +300,7 @@ void closePath(){
 }
 
 void readPath(){
-  SD.open("pathFile.txt",FILE_READ);
+  pathFile = SD.open("pathFile.txt",FILE_READ);
   if (pathFile) 
   {
     while (pathFile.available())

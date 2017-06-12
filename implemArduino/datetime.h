@@ -3,6 +3,7 @@
 
 #include "charmanagement.h"
 
+//Représentation du temps sous format de nombres
 typedef struct Datetime {
 	int year;
 	int month;
@@ -13,6 +14,7 @@ typedef struct Datetime {
 	int hundredths;
 }Datetime;
 
+//Représentation du temps sous format de caractères
 typedef struct Showdatetime {
 	char year[4];
 	char month[2];
@@ -23,8 +25,10 @@ typedef struct Showdatetime {
 	char hundredths[2];
 }Showdatetime;
 
+//Fonctions de transformation de format
 Showdatetime datetime2Showdatetime(Datetime* datetime);
 
+//Initialisation
 void initShowDateTime(Showdatetime* showdatetime);
 
 #endif

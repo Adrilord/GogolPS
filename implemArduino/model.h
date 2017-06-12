@@ -10,6 +10,8 @@
 #define TRUE 0
 #define FALSE 1
 
+//Le modèle contient toutes les données importantes du programme au
+//format "brut" (nombres)
 typedef struct Model {
 	//local prog data
 	int autonomy;
@@ -27,6 +29,8 @@ typedef struct Model {
 	long hdop;
 }Model;
 
+//Cette structure permet de faciliter l'affichage en donnant le modèle
+//sous forme de chaînes de caractères 
 typedef struct ShowModel {
 	//local prog data
 	char autonomy[3];
@@ -45,7 +49,10 @@ typedef struct ShowModel {
   char isSDOK[2];
 }ShowModel;
 
+//Fonction de transformation de Model à ShowModel
 void modelToShowModel(Model* model, ShowModel* showModel);
+
+//Fonctions de mise à jour du modèle
 
 void updateModelGPSdata(Model* model, TinyGPS* gps);
 
