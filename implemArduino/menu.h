@@ -15,9 +15,9 @@ typedef enum MENU_TYPE MENU_TYPE;
 typedef struct Menu{
 	char cases[16]; //contenu du menu
 	//variables pour la gestion de la configuration
-	int selectionIDGroupCases[16];
-	int selectedIDGroup;
-	int maxSelectionGroupId;
+	int selectionIDGroupCases[16]; //Groupes de configuration
+	int selectedIDGroup; //Groupe de configration sélectionné
+	int maxSelectionGroupId; //nombre de groupe de configuration
 	int isConfigurable; //0 (TRUE)
 	int configureMode; // avec BPEN+BP1+BP0 (sw4), 0->normal, 1->config
 	//Variables de connection à d'autres menus

@@ -35,34 +35,45 @@
 // initialize the library with the numbers of the interface pins
 LiquidCrystal lcd(4, 5, 6, 7, 8, 9);
 
-//GPS
+//objets nécessaires pour lire les données transmises par le gps
 TinyGPS gps;
 SoftwareSerial ss(GPSTX, GPSRX);
 
-//button pins
+//pins des boutons
 int buttonPins[NBBUTTONS]={PBP0,PBP1,PBPEN};
 
-// Instantiate a Bounce object
+//objets nécessairesp pour lire les valeurs et déterminer les états
+//des boutons
 Bounce debouncer[NBBUTTONS];
 int buttonValues[NBBUTTONS]={HIGH,HIGH,HIGH};
 int buttonStates[NBBUTTONS]={INIT,INIT,INIT};
 
+//3 states : 0 init, 1 engaged, 2 waiting to desengaged
+//2 values : HIGH or LOW
+//En fonction des modifications de valeurs des boutons, on change leur état
 void readBoutons(Bounce* debouncer , int* buttonStates, int* buttonValues);
 
-//return switchActivated
+//Indique le switch en cours d'activation en fonction des états des boutons
 int buttonStatesToSwitchActivated(int* buttonStates);
 
+//Indique le menu actuel
 int currentMenu=ACCUEIL;
 
+//pour vérifier le bon fonctionnement des boutons
 void testButtons();
 
+//pour ouvrir le fichier d'enregistrement
 void initPath();
 
+//pour fermer le fichier d'enregistrement
 void closePath();
 
+//pour lire le fichier d'enregistrement
 void readPath();
 
-bool isSDOK;
+bool isSDOK; //indique si la carte est bien connectée
+
+//informations de model
 double batterieVolt=0;
 float latitude;
 float longitude;
@@ -73,21 +84,20 @@ byte heure;
 byte minute;
 byte secondes;
 
-//quand on passe de stopped a started on cree un fichier horodaté dans la fonction recordParam
-//d'abord reussir a creer un fichier enregistrer les données et le lire, puis horodatage, puis eventuellment rajouter un menu pour la selection des fichiers,
-//pour l'envoi des fichiers,et peut etre la suppression
+//Paramètres pour le fichier d'enregistrment
 char filename[18];
-int compteur=0;
-
 File pathFile;
 bool fileOpened;
 
+//timer pour enregistrer de manière périodique les données de model
 long timerInterv = millis();
 
 void setup() {
     
+    //initialise le lcd
     lcd.begin(COLS,ROWS);
 
+	//initialisation des boutons
     for(int i=0; i<NBBUTTONS; i++) {
     debouncer[i]=Bounce();
     
@@ -101,12 +111,13 @@ void setup() {
     buttonValues[i]=debouncer[i].read();
   }
   
+  //initialisation de la carte SD
   isSDOK=false;
   if (SD.begin(PSD)){
     isSDOK=true;
   }
   
-  
+  //initialisation de l'interface  série Ordinateur/Arduino
   Serial.begin(9600);
   
   //SoftwareSerial setup for the gps
@@ -117,24 +128,27 @@ void setup() {
 
 void loop() {
 
+  // récupération des données GPS
   gps.f_get_position(&latitude,&longitude, NULL);
   altitude=gps.f_altitude();
   gps.crack_datetime(NULL,NULL,NULL,&heure,&minute,&secondes,NULL,NULL);
   
-  readBoutons(debouncer , buttonStates, buttonValues);
+  readBoutons(debouncer , buttonStates, buttonValues); // lecture des boutons
+  //on détermine quel switch est activé
   int switchActivated = buttonStatesToSwitchActivated(buttonStates);
+  //en fonction du switch activé, on effectue une action
   lcd.setCursor(0,0);
   switch(switchActivated) {
     case SW1 :
+	   //changement de menu
       Serial.println("SW1");
        currentMenu=(currentMenu+1)%4;
        lcd.clear();
-       
       break;
     case SW2 :
+		//début/fin d'enregistrment de parcours (si on est dans le bon menu)
       Serial.println("SW2");
       if(currentMenu==ENR){
-
         started=!started;
         if(started){
         initPath();
@@ -146,6 +160,7 @@ void loop() {
       
       break;
     case SW3 :
+		//lecture du fichier d'enregistrement sur le moniteur série
        Serial.println("SW3");
        if(currentMenu==ENR){
           readPath();
@@ -153,6 +168,7 @@ void loop() {
        lcd.clear();
        break;
      case SW4 :
+        //lecture d'informations GPS sur le moniteur série
         Serial.print(longitude);
         Serial.print(",");
         Serial.print(latitude);
@@ -164,6 +180,7 @@ void loop() {
       
   }
 
+  //affiche du menu actuel sur le LCD en fonction de son type
   switch(currentMenu) {
       case ACCUEIL :
         lcd.print("BAT");
@@ -194,15 +211,15 @@ void loop() {
           lcd.print(gps.satellites());
      break;
      case ENR :
-        lcd.print(heure,2);
+        lcd.print((int) heure,2);
         lcd.setCursor(2,0);
         lcd.print(":");
         lcd.setCursor(3,0);
-        lcd.print(minute,2);
+        lcd.print((int) minute,2);
         lcd.setCursor(5,0);
         lcd.print(":");
         lcd.setCursor(6,0);
-        lcd.print(secondes,2);
+        lcd.print((int) secondes,2);
         lcd.setCursor(0,1);
         if(started){
           lcd.print("STOP");
@@ -214,7 +231,10 @@ void loop() {
   default:
   break; 
   }
-
+  
+  //écriture d'une ligne de donénes GPS
+  //dans le fichier d'enregistrement si celui si est ouvert et si
+  //si le temps est venu (> TEMPS_INTERV)
   if(fileOpened){
     if(millis() - timerInterv > TEMPS_INTERV){
       pathFile.print(longitude,10);

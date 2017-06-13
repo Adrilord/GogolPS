@@ -30,19 +30,25 @@
 #define GPSTX 3
 #define PSD 10
 
+//tests des fonctions du module charmanagement
 void testsCharMngmt ();
 
+//affiche un menu sur le lcd en indiquant si on veut que le curseur
+//clignote dans le cas du mode configuration
 void showMenu(LiquidCrystal* lcd, Menu* menu, int configBlink);
 
+//test l'affichage de menu
 void testShowMenu(LiquidCrystal* lcd, Menu** menus);
 
 //3 states : 0 init, 1 engaged, 2 waiting to desengaged
 //2 values : HIGH or LOW
+//En fonction des modifications de valeurs des boutons, on change leur état
 void readBoutons(Bounce* debouncer , int* buttonStates, int* buttonValues);
 
-//return switchActivated
+//Indique le switch en cours d'activation en fonction des états des boutons
 int buttonStatesToSwitchActivated(int* buttonStates);
 
+//pour vérifier le bon fonctionnement des boutons
 void testButtons();
 
 //FOR THE GPS
@@ -51,31 +57,33 @@ static void smartdelay(unsigned long ms);
 // initialize the library with the numbers of the interface pins
 LiquidCrystal lcd(4, 5, 6, 7, 8, 9);
 
-//GPS
+//objets nécessaires pour lire les données transmises par le gps
 TinyGPS gps;
 SoftwareSerial ss(GPSTX, GPSRX);
 
-//button pins
+//pins des boutons
 int buttonPins[NBBUTTONS]={PBP0,PBP1,PBPEN};
 
-// Instantiate a Bounce object
+//objets nécessairesp pour lire les valeurs et déterminer les états
+//des boutons
 Bounce debouncer[NBBUTTONS];
 int buttonValues[NBBUTTONS]={HIGH,HIGH,HIGH};
 int buttonStates[NBBUTTONS]={INIT,INIT,INIT};
 
-Model momo;
-Menu currentMenu;
+Model momo; //model
+Menu currentMenu; //menu actuel affiché sur le lcd
 
+//indique si on doit faire clignoter le curseur pour le mode configuration
 int configBlinking=FALSE;
 
-RecordConf recordConf;
-char isSDOK[2];
+RecordConf recordConf; //paramètres d'enregistrement
+char isSDOK[2]; //indique (en char) si la carte SD est bien connectée
 
 void setup()
 {
   Serial.begin(9600);
   
-  // init menus and model
+  // init menu and model
   initModel(&momo);
   generateMenu(&currentMenu, &momo, ACCUEIL);
 
@@ -111,33 +119,39 @@ void setup()
 
 void loop()
 {
-  readBoutons(debouncer , buttonStates, buttonValues);
+  readBoutons(debouncer , buttonStates, buttonValues); // lecture des boutons
+  //on détermine quel switch est activé
   int switchActivated = buttonStatesToSwitchActivated(buttonStates);
+  //en fonction du switch activé, on effectue une action
   switch(switchActivated) {
     case SW1 :
       Serial.println("SW1");
+      //changement de menu
       if(currentMenu.configureMode == FALSE) {
         generateMenu(&currentMenu, &momo, currentMenu.sw1Connection);
       }
       break;
     case SW2 :
       Serial.println("SW2");
+      //changement de sous-menu
       if(currentMenu.configureMode == FALSE) {
         generateMenu(&currentMenu, &momo, currentMenu.sw2Connection);
       } else {
+		 //ou changement du paramètre sélectionné en mode configuration
         increaseSelectedConfigValue(&currentMenu,&momo);
       }
       break;
     case SW3 :
       Serial.println("SW3");
-      if(currentMenu.configureMode==TRUE) {
+      if(currentMenu.configureMode==TRUE && currentMenu.menu_type != ENR1) {
         increaseSelection(&currentMenu);
-        recordParams(&recordConf);
-        readParams(&momo);
-      }
+      } else if (currentMenu.menu_type == ENR1) {
+		  //ici on aurait du avoir la partie enregistrement desdonnées
+	  }
       break;
     case SW4 :
       Serial.println("SW4");
+      //on passe en mode configuration ou on le quitte
       if(currentMenu.isConfigurable == TRUE && currentMenu.configureMode==FALSE) {
         currentMenu.configureMode=TRUE;
       } else {
