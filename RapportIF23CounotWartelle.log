@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016/Arch Linux) (preloaded format=pdflatex 2017.5.28)  13 JUN 2017 17:52
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016/Arch Linux) (preloaded format=pdflatex 2017.5.28)  14 JUN 2017 15:41
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -654,7 +654,7 @@ le.toc)
 ]
 Chapitre 1.
 
-Underfull \hbox (badness 10000) in paragraph at lines 79--90
+Underfull \hbox (badness 10000) in paragraph at lines 81--92
 
  []
 
@@ -663,30 +663,35 @@ Underfull \hbox (badness 10000) in paragraph at lines 79--90
 ] [3]
 Chapitre 2.
 
-Underfull \hbox (badness 10000) in paragraph at lines 123--128
+Underfull \hbox (badness 10000) in paragraph at lines 125--130
 
  []
 
-<diagrammeCasUtilisation1.png, id=21, 614.295pt x 794.97pt>
+<diagrammeCasUtilisation1.png, id=22, 614.295pt x 794.97pt>
 File: diagrammeCasUtilisation1.png Graphic file (type png)
 
 <use diagrammeCasUtilisation1.png>
-Package pdftex.def Info: diagrammeCasUtilisation1.png used on input line 137.
+Package pdftex.def Info: diagrammeCasUtilisation1.png used on input line 139.
 (pdftex.def)             Requested size: 307.14674pt x 397.48402pt.
  [4
 
 ] [5 <./diagrammeCasUtilisation1.png>]
-<diagrammeCasUtilisation2.png, id=31, 614.295pt x 794.97pt>
+<diagrammeCasUtilisation2.png, id=32, 614.295pt x 794.97pt>
 File: diagrammeCasUtilisation2.png Graphic file (type png)
 
 <use diagrammeCasUtilisation2.png>
-Package pdftex.def Info: diagrammeCasUtilisation2.png used on input line 174.
-(pdftex.def)             Requested size: 307.14674pt x 397.48402pt.
- [6] [7 <./diagrammeCasUtilisation2.png>]
-<schemaProgramme.png, id=40, 614.295pt x 794.97pt>
+Package pdftex.def Info: diagrammeCasUtilisation2.png used on input line 177.
+(pdftex.def)             Requested size: 368.57983pt x 476.98569pt.
+
+Overfull \hbox (23.57983pt too wide) in paragraph at lines 177--178
+ [] 
+ []
+
+[6] [7 <./diagrammeCasUtilisation2.png>]
+<schemaProgramme.png, id=41, 614.295pt x 794.97pt>
 File: schemaProgramme.png Graphic file (type png)
  <use schemaProgramme.png>
-Package pdftex.def Info: schemaProgramme.png used on input line 223.
+Package pdftex.def Info: schemaProgramme.png used on input line 226.
 (pdftex.def)             Requested size: 307.14674pt x 397.48402pt.
 
 [8] [9 <./schemaProgramme.png>] [10]
@@ -694,29 +699,90 @@ Chapitre 3.
 [11
 
 ]
+<Enregistrements/parcoursEnrUno1206.png, id=55, 426.59375pt x 400.49625pt>
+File: Enregistrements/parcoursEnrUno1206.png Graphic file (type png)
+
+<use Enregistrements/parcoursEnrUno1206.png>
+Package pdftex.def Info: Enregistrements/parcoursEnrUno1206.png used on input l
+ine 322.
+(pdftex.def)             Requested size: 213.29634pt x 200.24763pt.
+
+<Enregistrements/parcoursEnrDos1206.png, id=56, 548.0475pt x 598.235pt>
+File: Enregistrements/parcoursEnrDos1206.png Graphic file (type png)
+
+<use Enregistrements/parcoursEnrDos1206.png>
+Package pdftex.def Info: Enregistrements/parcoursEnrDos1206.png used on input l
+ine 329.
+(pdftex.def)             Requested size: 274.02307pt x 299.11676pt.
+ [12 <./Enregistrements/parcoursEnrUno1206.png>]
+<Enregistrements/parcoursEnrTres1206.png, id=62, 480.79625pt x 417.56pt>
+File: Enregistrements/parcoursEnrTres1206.png Graphic file (type png)
+
+<use Enregistrements/parcoursEnrTres1206.png>
+Package pdftex.def Info: Enregistrements/parcoursEnrTres1206.png used on input 
+line 336.
+(pdftex.def)             Requested size: 240.39752pt x 208.77948pt.
+ [13 <./Enregistrements/parcoursEnrDos1206.png>] [14 <./Enregistrements/parcour
+sEnrTres1206.png>]
+LaTeX Font Info:    Try loading font information for T1+cmtt on input line 373.
+
+
+(/usr/share/texmf-dist/tex/latex/base/t1cmtt.fd
+File: t1cmtt.fd 2014/09/29 v2.5h Standard LaTeX font definitions
+) [15] [16]
+<Enregistrements/autocorrelation1.png, id=78, 578.16pt x 433.62pt>
+File: Enregistrements/autocorrelation1.png Graphic file (type png)
+
+<use Enregistrements/autocorrelation1.png>
+Package pdftex.def Info: Enregistrements/autocorrelation1.png used on input lin
+e 488.
+(pdftex.def)             Requested size: 289.07928pt x 216.80946pt.
+
+<Enregistrements/autocorrelation2.png, id=79, 578.16pt x 433.62pt>
+File: Enregistrements/autocorrelation2.png Graphic file (type png)
+
+<use Enregistrements/autocorrelation2.png>
+Package pdftex.def Info: Enregistrements/autocorrelation2.png used on input lin
+e 495.
+(pdftex.def)             Requested size: 289.07928pt x 216.80946pt.
+ [17 <./Enregistrements/autocorrelation1.png (PNG copy)>]
+<Enregistrements/autocorrelation3.png, id=83, 578.16pt x 433.62pt>
+File: Enregistrements/autocorrelation3.png Graphic file (type png)
+
+<use Enregistrements/autocorrelation3.png>
+Package pdftex.def Info: Enregistrements/autocorrelation3.png used on input lin
+e 502.
+(pdftex.def)             Requested size: 289.07928pt x 216.80946pt.
+ [18 <./Enregistrements/autocorrelation2.png (PNG copy)> <./Enregistrements/aut
+ocorrelation3.png (PNG copy)>]
+[19]
 Chapitre 4.
-[12
+[20
 
 ] (./RapportIF23CounotWartelle.aux) ) 
 Here is how much of TeX's memory you used:
- 4904 strings out of 493013
- 61411 string characters out of 6139317
+ 4969 strings out of 493013
+ 63307 string characters out of 6139317
  136368 words of memory out of 5000000
- 8340 multiletter control sequences out of 15000+600000
- 16805 words of font info for 47 fonts, out of 8000000 for 9000
+ 8391 multiletter control sequences out of 15000+600000
+ 19775 words of font info for 59 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  39i,7n,35p,256b,439s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf-dist/fonts/enc/dvips/cm-
-super/cm-super-t1.enc}</usr/share/texmf-dist/fonts/type1/public/cm-super/sfbx14
-40.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfbx2074.pfb></usr/sh
-are/texmf-dist/fonts/type1/public/cm-super/sfbx2488.pfb></usr/share/texmf-dist/
-fonts/type1/public/cm-super/sfcc1000.pfb></usr/share/texmf-dist/fonts/type1/pub
-lic/cm-super/sfrm1000.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sf
-rm1200.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfrm1728.pfb>
-Output written on RapportIF23CounotWartelle.pdf (13 pages, 310643 bytes).
+super/cm-super-t1.enc}</usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmm
+i10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/sh
+are/texmf-dist/fonts/type1/public/cm-super/sfbx1000.pfb></usr/share/texmf-dist/
+fonts/type1/public/cm-super/sfbx1440.pfb></usr/share/texmf-dist/fonts/type1/pub
+lic/cm-super/sfbx2074.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sf
+bx2488.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfcc1000.pfb></us
+r/share/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb></usr/share/texmf-d
+ist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/share/texmf-dist/fonts/type1
+/public/cm-super/sfrm1728.pfb></usr/share/texmf-dist/fonts/type1/public/cm-supe
+r/sftt1000.pfb>
+Output written on RapportIF23CounotWartelle.pdf (21 pages, 2090427 bytes).
 PDF statistics:
- 83 PDF objects out of 1000 (max. 8388607)
- 54 compressed objects within 1 object stream
+ 133 PDF objects out of 1000 (max. 8388607)
+ 83 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 16 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 46 words of extra memory for PDF output out of 10000 (max. 10000000)
 

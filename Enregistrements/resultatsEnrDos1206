@@ -1,0 +1,24 @@
+
+Nombre moyen de sattellites :
+ 6
+Heure GPS de début :
+   11
+   39
+    3
+Heure GPS de fin :
+   11
+   43
+   12
+Ecart moyen (en secondes) entre 2 enregistrements selon GPS 
+(comparé aux 5 secondes réelles) :
+ 5.0816
+Hdop moyen :
+ 190
+Distance (en mètres sans prendre en compte l'altitude) moyennepar rapport au point de référence :
+ 40.430
+Ecart type de ces distances (en mètres) :
+ 26.210
+altitude moyenne (en mètres) :
+ 122.39
+Ecart (distance) moyen entre chaque position en mètre
+ 4.2712

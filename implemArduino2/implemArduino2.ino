@@ -155,7 +155,7 @@ void loop() {
         }else{
         closePath();
        }
-                }
+      }
       lcd.clear();
       
       break;
